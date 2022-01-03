@@ -1,0 +1,17 @@
+{
+  "extends": ["react-app"],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "camelcase": "off",
+    "no-unused-vars": "off",
+    "node/handle-callback-err": "off",
+    "space-before-function-paren": "off",
+    "no-use-before-define": "off",
+    "multiline-ternary": "off",
+    "react-hooks/exhaustive-deps": "off"
+  },
+  "globals": {
+    "JSX": true,
+    "React": true
+  }
+}
