@@ -90,7 +90,7 @@ function Bank() {
     try {
       setLoading(true)
       const loading = Message.loading({
-        content: '正在发送交易...',
+        content: 'Sending transaction...',
         duration: 0
       })
       await contract.approve(current!.tokenId)
@@ -98,7 +98,7 @@ function Bank() {
       loadNfts()
     } catch (error) {
       Message.clear()
-      Message.warning('交易已取消')
+      Message.warning('Transaction canceled')
     } finally {
       setLoading(false)
     }
@@ -107,19 +107,19 @@ function Bank() {
   const add = async (tokenId: number, uri: string) => {
     try {
       const valid = await util.checkImg(uri)
-      if (valid !== true) return Message.error('无效的图片')
+      if (valid !== true) return Message.error('Invalid picture')
       const loading = Message.loading({
-        content: '正在发送交易...',
+        content: 'Sending transaction...',
         duration: 0
       })
       await contract.mint(tokenId, uri)
       setVisible(false)
       loading()
-      Message.success('交易已确认')
+      Message.success('Transaction confirmed')
       loadNfts()
     } catch (error) {
       Message.clear()
-      Message.warning('交易已取消')
+      Message.warning('Transaction canceled')
     }
   }
 
@@ -134,17 +134,17 @@ function Bank() {
     try {
       setLoading(true)
       const loading = Message.loading({
-        content: '正在发送交易...',
+        content: 'Sending transaction...',
         duration: 0
       })
       await contract.deposit(tokenId)
       loading()
       loadNfts()
       loadDeposited()
-      Message.success('交易已确认')
+      Message.success('Transaction confirmed')
     } catch (error) {
       Message.clear()
-      Message.warning('交易已取消')
+      Message.warning('Transaction canceled')
     } finally {
       setLoading(false)
     }
@@ -154,17 +154,17 @@ function Bank() {
     try {
       setLoading(true)
       const loading = Message.loading({
-        content: '正在发送交易...',
+        content: 'Sending transaction...',
         duration: 0
       })
       await contract.redemption(tokenId)
       loading()
       loadDeposited()
       loadNfts()
-      Message.success('交易已确认')
+      Message.success('Transaction confirmed')
     } catch (error) {
       Message.clear()
-      Message.warning('交易已取消')
+      Message.warning('Transaction canceled')
     } finally {
       setLoading(false)
     }
@@ -174,7 +174,7 @@ function Bank() {
     try {
       setLoading(true)
       const loading = Message.loading({
-        content: '正在发送交易...',
+        content: 'Sending transaction...',
         duration: 0
       })
       await contract.approveRedemption()
@@ -182,7 +182,7 @@ function Bank() {
       loadDeposited()
     } catch (error) {
       Message.clear()
-      Message.warning('交易已取消')
+      Message.warning('Transaction canceled')
     } finally {
       setLoading(false)
     }
@@ -225,7 +225,7 @@ function Bank() {
           className={styles.btn}
           onClick={() => deposit(nft.tokenId)}
         >
-          已定价 {nft.price} E8T，抵押
+          Price  {nft.price} E8T, Pledge
         </Button>
       )
     }

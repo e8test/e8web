@@ -57,7 +57,7 @@ export default function Dashboard() {
     loading()
     myChart1.current.setOption({
       title: {
-        text: 'ETF Token池',
+        text: 'ETF Token Pool',
         left: 'center'
       },
       tooltip: {
@@ -68,8 +68,8 @@ export default function Dashboard() {
           type: 'pie',
           radius: '50%',
           data: [
-            { value: reserve, name: '储备量' },
-            { value: totalSupply - reserve, name: '流通量' }
+            { value: reserve, name: 'Reserve' },
+            { value: totalSupply - reserve, name: 'circulation' }
           ],
           label: {
             formatter: '{b}: {c}'
