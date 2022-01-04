@@ -11,7 +11,11 @@ module.exports = override(
   addWebpackAlias({
     '@': path.resolve(__dirname, 'src/')
   }),
-  addWebpackPlugin(new NodePolyfillPlugin()),
+  addWebpackPlugin(
+    new NodePolyfillPlugin({
+      excludeAliases: ['console', 'console-browserify']
+    })
+  ),
   fixBabelImports('babel-plugin-import', {
     libraryName: '@arco-design/web-react/icon',
     libraryDirectory: 'react-icon',
