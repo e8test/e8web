@@ -36,13 +36,14 @@ export async function isApproved(tokenId: number) {
 }
 
 export async function getPrice(tokenId: number) {
-  const { value, expire } = await wallet.router.methods
-    .getPrice(config.nftAddr, tokenId)
+  const { value, expire, deposited } = await wallet.router.methods
+    .getNFTStatus(config.nftAddr, tokenId)
     .call()
   const price = new BN(value).div(decimals).toNumber()
   return {
     value: price,
-    expire: Number(expire)
+    expire: Number(expire),
+    deposited: deposited
   }
 }
 
