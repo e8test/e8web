@@ -5,6 +5,7 @@ export interface IBasicConfig {
   tokenAddr: string
   nftAddr: string
   routerAddr: string
+  logAddr: string
 }
 
 export interface IConfig {
@@ -18,8 +19,7 @@ export interface INft {
   tokenId: number
   uri: string
   approved: boolean,
-  price: {
-    value: number
-    expire: number
-  }
+  price: number
+  expire: number
+  deposited: boolean
 }

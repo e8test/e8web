@@ -22,9 +22,12 @@ import * as contract from '../../services/contract'
 import * as util from '../../libs/util'
 
 function Bank() {
+  const priceFormRef = useRef<FormInstance>(null)
   const formRef = useRef<FormInstance>(null)
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [current, setCurrent] = useState<INft>()
+  const [priceModalVisible, setPriceModalVisible] = useState(false)
   const [rows, setRows] = useState<INft[]>([])
 
   const loadNfts = async () => {
@@ -40,18 +43,33 @@ function Bank() {
       actions.push(contract.getNft(tokenId))
     }
     const result = await Promise.all(actions.reverse())
+    console.log(result)
     setRows(result)
     loading()
   }
 
-  const approve = async (tokenId: number) => {
+  const showPriceModal = (nft: INft) => {
+    setCurrent(nft)
+    setPriceModalVisible(true)
+  }
+
+  const onApprove = async () => {
+    try {
+      await priceFormRef.current?.validate()
+      await approve()
+      setPriceModalVisible(false)
+      setCurrent(undefined)
+    } catch (error) {}
+  }
+
+  const approve = async () => {
     try {
       setLoading(true)
       const loading = Message.loading({
         content: '正在发送交易...',
         duration: 0
       })
-      await contract.approve(tokenId)
+      await contract.approve(current!.tokenId)
       loading()
       loadNfts()
     } catch (error) {
@@ -122,13 +140,13 @@ function Bank() {
           long
           size="large"
           className={styles.btn}
-          onClick={() => approve(nft.tokenId)}
+          onClick={() => showPriceModal(nft)}
         >
           授权
         </Button>
       )
     }
-    if (nft.price.value && nft.price.expire) {
+    if (nft.price && nft.expire) {
       return (
         <Button
           long
@@ -137,7 +155,7 @@ function Bank() {
           className={styles.btn}
           onClick={() => deposit(nft.tokenId)}
         >
-          已定价 {nft.price.value} E8T，抵押
+          已定价 {nft.price} E8T，抵押
         </Button>
       )
     }
@@ -186,6 +204,28 @@ function Bank() {
           )}
         </Spin>
       </div>
+      <Modal
+        title="设置预估价格"
+        visible={priceModalVisible}
+        onCancel={() => setPriceModalVisible(false)}
+        onOk={onApprove}
+        style={{ maxWidth: '90%' }}
+      >
+        <Form layout="vertical" size="large" ref={priceFormRef}>
+          <Form.Item
+            label="预估价格"
+            field="price"
+            rules={[
+              {
+                required: true,
+                message: '请填写预估价格'
+              }
+            ]}
+          >
+            <InputNumber placeholder="请填写预估价格" min={1} />
+          </Form.Item>
+        </Form>
+      </Modal>
       <Modal
         title="添加NFT"
         visible={visible}

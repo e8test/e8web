@@ -246,15 +246,15 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    wallet.init().then(() => {
-      initChart1()
-      initChart2()
-      initChart3()
-      initChart4()
-      initChart5()
-      initChart6()
-      initChart7()
-    })
+    initChart1()
+    initChart2()
+    initChart3()
+    initChart4()
+    initChart5()
+    initChart6()
+    initChart7()
+
+    contract.marketValue()
 
     window.onresize = () => {
       myChart1.current?.resize()
