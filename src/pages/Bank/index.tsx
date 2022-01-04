@@ -212,7 +212,7 @@ function Bank() {
           className={styles.btn}
           onClick={() => showPriceModal(nft)}
         >
-          授权
+          Approve & Quote
         </Button>
       )
     }
@@ -304,14 +304,14 @@ function Bank() {
                       onClick={() => setTab('undeposited')}
                       size="large"
                     >
-                      未抵押
+                      NFTs
                     </Button>
                     <Button
                       type={tab === 'deposited' ? 'primary' : 'outline'}
                       onClick={() => setTab('deposited')}
                       size="large"
                     >
-                      已抵押
+                      mortgaged
                     </Button>
                   </Button.Group>
                   {tab === 'undeposited' && (
@@ -321,7 +321,7 @@ function Bank() {
                       onClick={() => setVisible(true)}
                       icon={<IconImage />}
                     >
-                      添加NFT
+                      Import NFT
                     </Button>
                   )}
                 </Space>

@@ -36,7 +36,7 @@ export default function Navbar() {
             <Link to="/bank">Bank</Link>
           </Menu.Item>
           <Menu.Item key="/roadmap">
-            <Link to="/roadmap">Raodmap</Link>
+            <Link to="/roadmap">Roadmap</Link>
           </Menu.Item>
           <Menu.Item key="/dashboard">
             <Link to="/dashboard">Dashboard</Link>
