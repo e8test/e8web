@@ -8,7 +8,7 @@ const config: IConfig = {
       chainName: 'Binance Smart Chain Testnet',
       rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
       nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
-      routerAddr: '0x28BC21f7dE21465aa06A6ba0005ac56FD701A2e3',
+      routerAddr: '0xfE16a7903153FD1B3Aa71BDa993BC5Ad7EAdb482',
       tokenAddr: '0xd7765F498B77d9C8F050BBD78620c33523E703b4'
     },
     56: {
