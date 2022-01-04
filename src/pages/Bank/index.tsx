@@ -229,7 +229,7 @@ function Bank() {
         </Button>
       )
     }
-    return <span className={styles.btn}>等待定价</span>
+    return <span className={styles.btn}>waiting for pricing</span>
   }
 
   const renderDepositedBtn = (nft: INft) => {
@@ -340,7 +340,7 @@ function Bank() {
         </Spin>
       </div>
       <Modal
-        title="设置预估价格"
+        title="estimate price"
         visible={priceModalVisible}
         onCancel={() => setPriceModalVisible(false)}
         onOk={onApprove}
@@ -348,21 +348,21 @@ function Bank() {
       >
         <Form layout="vertical" size="large" ref={priceFormRef}>
           <Form.Item
-            label="预估价格"
+            label="estimate price"
             field="price"
             rules={[
               {
                 required: true,
-                message: '请填写预估价格'
+                message: 'Please input estimate price'
               }
             ]}
           >
-            <InputNumber placeholder="请填写预估价格" min={1} />
+            <InputNumber placeholder="Please input estimate price" min={1} />
           </Form.Item>
         </Form>
       </Modal>
       <Modal
-        title="添加NFT"
+        title="Import NFT"
         visible={visible}
         onOk={onAdd}
         onCancel={() => setVisible(false)}
