@@ -14,7 +14,6 @@ import { CanvasRenderer } from 'echarts/renderers'
 import * as echarts from 'echarts/core'
 
 import styles from './styles.module.scss'
-import Navbar from '../../components/Navbar'
 import * as wallet from '../../services/wallet'
 import * as contract from '../../services/contract'
 
@@ -279,17 +278,14 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <>
-      <Navbar active="dashboard" />
-      <div className={styles.wrap}>
-        <div className={styles.chart} ref={chart1} />
-        <div className={styles.chart} ref={chart2} />
-        <div className={styles.chart} ref={chart3} />
-        <div className={styles.chart} ref={chart4} />
-        <div className={styles.chart} ref={chart5} />
-        <div className={styles.chart} ref={chart6} />
-        <div className={styles.chart} ref={chart7} />
-      </div>
-    </>
+    <div className={styles.wrap}>
+      <div className={styles.chart} ref={chart1} />
+      <div className={styles.chart} ref={chart2} />
+      <div className={styles.chart} ref={chart3} />
+      <div className={styles.chart} ref={chart4} />
+      <div className={styles.chart} ref={chart5} />
+      <div className={styles.chart} ref={chart6} />
+      <div className={styles.chart} ref={chart7} />
+    </div>
   )
 }

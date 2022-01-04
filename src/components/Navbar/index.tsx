@@ -1,7 +1,7 @@
 import { Button, Menu } from '@arco-design/web-react'
 import { useState } from 'react'
 import { IconMenu } from '@arco-design/web-react/icon'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import styles from './style.module.scss'
 import Dropmenu from './DropMenu'
@@ -9,11 +9,8 @@ import store from '../../store'
 import * as wallet from '../../services/wallet'
 import * as util from '../../libs/util'
 
-interface Props {
-  active: string
-}
-
-export default function Navbar(props: Props) {
+export default function Navbar() {
+  const { pathname } = useLocation()
   const [visible, setVisible] = useState(false)
 
   return (
@@ -30,18 +27,18 @@ export default function Navbar(props: Props) {
         <Menu
           mode="horizontal"
           className={styles.menu}
-          defaultSelectedKeys={[props.active]}
+          defaultSelectedKeys={[pathname]}
         >
-          <Menu.Item key="home">
+          <Menu.Item key="/">
             <Link to="/">Home</Link>
           </Menu.Item>
-          <Menu.Item key="bank">
+          <Menu.Item key="/bank">
             <Link to="/bank">Bank</Link>
           </Menu.Item>
-          <Menu.Item key="roadmap">
+          <Menu.Item key="/roadmap">
             <Link to="/roadmap">Raodmap</Link>
           </Menu.Item>
-          <Menu.Item key="dashboard">
+          <Menu.Item key="/dashboard">
             <Link to="/dashboard">Dashboard</Link>
           </Menu.Item>
         </Menu>
@@ -55,7 +52,7 @@ export default function Navbar(props: Props) {
         )}
       </div>
       {visible && (
-        <Dropmenu active={props.active} onClose={() => setVisible(false)} />
+        <Dropmenu active={pathname} onClose={() => setVisible(false)} />
       )}
     </>
   )

@@ -30,16 +30,16 @@ export default function Dropmenu({ active, onClose }: Props) {
         afterClose={() => onClose()}
       >
         <Menu defaultSelectedKeys={[active]}>
-          <Menu.Item key="home">
+          <Menu.Item key="/">
             <Link to="/">Home</Link>
           </Menu.Item>
-          <Menu.Item key="bank">
+          <Menu.Item key="/bank">
             <Link to="/bank">Bank</Link>
           </Menu.Item>
-          <Menu.Item key="roadmap">
+          <Menu.Item key="/roadmap">
             <Link to="/roadmap">Raodmap</Link>
           </Menu.Item>
-          <Menu.Item key="dashboard">
+          <Menu.Item key="/dashboard">
             <Link to="/dashboard">Dashboard</Link>
           </Menu.Item>
         </Menu>

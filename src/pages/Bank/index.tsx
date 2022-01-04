@@ -15,7 +15,6 @@ import { IconImage } from '@arco-design/web-react/icon'
 import { observer } from 'mobx-react'
 
 import styles from './styles.module.scss'
-import Navbar from '../../components/Navbar'
 import store from '../../store'
 import { INft } from '../../models/types'
 import * as wallet from '../../services/wallet'
@@ -147,7 +146,6 @@ function Bank() {
 
   return (
     <>
-      <Navbar active="bank" />
       <div className="page-main">
         <Spin loading={loading} style={{ display: 'block', width: '100%' }}>
           {store.valid && (
