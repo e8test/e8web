@@ -254,8 +254,6 @@ export default function Dashboard() {
     initChart6()
     initChart7()
 
-    contract.marketValue()
-
     window.onresize = () => {
       myChart1.current?.resize()
       myChart2.current?.resize()

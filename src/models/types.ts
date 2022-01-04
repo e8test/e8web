@@ -18,7 +18,7 @@ export interface IConfig {
 export interface INft {
   tokenId: number
   uri: string
-  approved: boolean,
+  approved?: boolean,
   price: number
   expire: number
   deposited: boolean

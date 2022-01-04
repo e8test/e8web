@@ -9,7 +9,8 @@ import {
   Input,
   Empty,
   InputNumber,
-  FormInstance
+  FormInstance,
+  Space
 } from '@arco-design/web-react'
 import { IconImage } from '@arco-design/web-react/icon'
 import { observer } from 'mobx-react'
@@ -24,11 +25,14 @@ import * as util from '../../libs/util'
 function Bank() {
   const priceFormRef = useRef<FormInstance>(null)
   const formRef = useRef<FormInstance>(null)
+  const [tab, setTab] = useState<'deposited' | 'undeposited'>('undeposited')
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const [current, setCurrent] = useState<INft>()
   const [priceModalVisible, setPriceModalVisible] = useState(false)
   const [rows, setRows] = useState<INft[]>([])
+  const [deposited, setDeposited] = useState<INft[]>()
+  const [depositedApproved, setDepositedApproved] = useState(false)
 
   const loadNfts = async () => {
     const loading = Message.loading({
@@ -45,6 +49,26 @@ function Bank() {
     const result = await Promise.all(actions.reverse())
     console.log(result)
     setRows(result)
+    loading()
+  }
+
+  const loadDeposited = async () => {
+    const loading = Message.loading({
+      content: 'Loading...',
+      duration: 0
+    })
+    const count = await contract.depositedCount()
+    if (count === 0) return
+    const actions = []
+    const approved = await contract.isDepositedApproved()
+    setDepositedApproved(approved)
+    for (let i = 0; i < count; i++) {
+      const tokenId = await contract.getDepositedTokenId(i)
+      actions.push(contract.getDeposited(tokenId))
+    }
+    const result = await Promise.all(actions.reverse())
+    console.log(result)
+    setDeposited(result)
     loading()
   }
 
@@ -116,6 +140,7 @@ function Bank() {
       await contract.deposit(tokenId)
       loading()
       loadNfts()
+      loadDeposited()
       Message.success('交易已确认')
     } catch (error) {
       Message.clear()
@@ -124,6 +149,51 @@ function Bank() {
       setLoading(false)
     }
   }
+
+  const redemption = async (tokenId: number) => {
+    try {
+      setLoading(true)
+      const loading = Message.loading({
+        content: '正在发送交易...',
+        duration: 0
+      })
+      await contract.redemption(tokenId)
+      loading()
+      loadDeposited()
+      loadNfts()
+      Message.success('交易已确认')
+    } catch (error) {
+      Message.clear()
+      Message.warning('交易已取消')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const approveRedemption = async () => {
+    try {
+      setLoading(true)
+      const loading = Message.loading({
+        content: '正在发送交易...',
+        duration: 0
+      })
+      await contract.approveRedemption()
+      loading()
+      loadDeposited()
+    } catch (error) {
+      Message.clear()
+      Message.warning('交易已取消')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (tab === 'deposited' && !deposited) {
+      setDeposited([])
+      loadDeposited()
+    }
+  }, [tab])
 
   useEffect(() => {
     formRef.current?.resetFields()
@@ -162,6 +232,64 @@ function Bank() {
     return <span className={styles.btn}>等待定价</span>
   }
 
+  const renderDepositedBtn = (nft: INft) => {
+    if (depositedApproved) {
+      return (
+        <Button
+          long
+          size="large"
+          type="outline"
+          className={styles.btn}
+          onClick={() => redemption(nft.tokenId)}
+        >
+          已抵押 {nft.price} E8T，赎回
+        </Button>
+      )
+    }
+    return (
+      <Button
+        long
+        size="large"
+        className={styles.btn}
+        onClick={approveRedemption}
+      >
+        授权赎回
+      </Button>
+    )
+  }
+
+  const renderList = () => {
+    if (tab === 'undeposited') {
+      return rows.length > 0 ? (
+        <div className={styles.nfts}>
+          {rows.map(item => (
+            <div key={item.tokenId} className={styles.nft}>
+              <div className={styles.imgbox}>
+                <img src={item.uri} alt="" className={styles.img} />
+              </div>
+              {renderBtn(item)}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Empty />
+      )
+    }
+    if (!deposited || deposited.length === 0) return <Empty />
+    return (
+      <div className={styles.nfts}>
+        {deposited?.map(item => (
+          <div key={item.tokenId} className={styles.nft}>
+            <div className={styles.imgbox}>
+              <img src={item.uri} alt="" className={styles.img} />
+            </div>
+            {renderDepositedBtn(item)}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="page-main">
@@ -169,30 +297,37 @@ function Bank() {
           {store.valid && (
             <>
               <div>
-                <Button
-                  type="primary"
-                  size="large"
-                  onClick={() => setVisible(true)}
-                  icon={<IconImage />}
-                >
-                  添加NFT
-                </Button>
+                <Space>
+                  <Button.Group>
+                    <Button
+                      type={tab === 'undeposited' ? 'primary' : 'outline'}
+                      onClick={() => setTab('undeposited')}
+                      size="large"
+                    >
+                      未抵押
+                    </Button>
+                    <Button
+                      type={tab === 'deposited' ? 'primary' : 'outline'}
+                      onClick={() => setTab('deposited')}
+                      size="large"
+                    >
+                      已抵押
+                    </Button>
+                  </Button.Group>
+                  {tab === 'undeposited' && (
+                    <Button
+                      type="primary"
+                      size="large"
+                      onClick={() => setVisible(true)}
+                      icon={<IconImage />}
+                    >
+                      添加NFT
+                    </Button>
+                  )}
+                </Space>
               </div>
               <Divider />
-              {rows.length > 0 ? (
-                <div className={styles.nfts}>
-                  {rows.map(item => (
-                    <div key={item.tokenId} className={styles.nft}>
-                      <div className={styles.imgbox}>
-                        <img src={item.uri} alt="" className={styles.img} />
-                      </div>
-                      {renderBtn(item)}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <Empty />
-              )}
+              {renderList()}
             </>
           )}
           {!store.valid && (

@@ -5,6 +5,7 @@ import store from '../store'
 import * as wallet from './wallet'
 
 const decimals = Math.pow(10, 18)
+const approveAmount = new BN(10).pow(50).toString(10)
 
 export async function balanceOf() {
   const result = await wallet.nft.methods.balanceOf(store.account).call()
@@ -36,18 +37,21 @@ export async function isApproved(tokenId: number) {
 }
 
 export async function getPrice(tokenId: number) {
-  const { value, expire } = await wallet.router.methods
-    .getPrice(config.nftAddr, tokenId)
+  const { value, expire, deposited } = await wallet.router.methods
+    .getNFTStatus(config.nftAddr, tokenId)
     .call()
   const price = new BN(value).div(decimals).toNumber()
   return {
     value: price,
-    expire: Number(expire)
+    expire: Number(expire),
+    deposited: deposited
   }
 }
 
 export async function getStatus(tokenId: number) {
-  let { value, expire, deposited } = await wallet.router.methods.getNFTStatus(config.nftAddr, tokenId).call()
+  let { value, expire, deposited } = await wallet.router.methods
+    .getNFTStatus(config.nftAddr, tokenId)
+    .call()
   value = new BN(value).div(decimals).toNumber()
   expire = Number(expire)
   return {
@@ -114,6 +118,53 @@ export async function tokenInfo() {
     reserve,
     totalSupply
   }
+}
+
+export async function depositedCount() {
+  const result = await wallet.router.methods
+    .getDepositedCount(store.account)
+    .call()
+  return result
+}
+
+export async function getDepositedTokenId(index: number) {
+  const { tokenId } = await wallet.router.methods
+    .getDepositedOfOwnerByIndex(store.account, index)
+    .call()
+  return tokenId
+}
+
+export async function isDepositedApproved() {
+  const result = await wallet.token.methods
+    .allowance(store.account, config.routerAddr)
+    .call()
+  return new BN(result).gt(0)
+}
+
+export async function getDeposited(tokenId: number) {
+  const [uri, status] = await Promise.all([
+    loadNFT(tokenId),
+    getStatus(tokenId)
+  ])
+  return {
+    tokenId,
+    uri,
+    ...status
+  }
+}
+
+export async function approveRedemption() {
+  const result = await wallet.token.methods
+    .approve(config.routerAddr, approveAmount)
+    .send({ from: store.account })
+  return result
+}
+
+export async function redemption(tokenId: number) {
+  const result = await wallet.router.methods
+    .redemption(config.nftAddr, tokenId)
+    .send({ from: store.account })
+  return result
 }
 
 export async function marketValue() {
