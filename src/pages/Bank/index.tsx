@@ -10,7 +10,8 @@ import {
   Empty,
   InputNumber,
   FormInstance,
-  Space
+  Space,
+  Notification
 } from '@arco-design/web-react'
 import { IconImage } from '@arco-design/web-react/icon'
 import { observer } from 'mobx-react'
@@ -80,8 +81,8 @@ function Bank() {
   const onApprove = async () => {
     try {
       await priceFormRef.current?.validate()
-      await approve()
       setPriceModalVisible(false)
+      await approve()
       setCurrent(undefined)
     } catch (error) {}
   }
@@ -106,12 +107,14 @@ function Bank() {
 
   const add = async (tokenId: number, uri: string) => {
     try {
-      const valid = await util.checkImg(uri)
-      if (valid !== true) return Message.error('Invalid picture')
+      setVisible(false)
+      setLoading(true)
       const loading = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
+      const valid = await util.checkImg(uri)
+      if (valid !== true) return Message.error('Invalid picture')
       await contract.mint(tokenId, uri)
       setVisible(false)
       loading()
@@ -120,6 +123,8 @@ function Bank() {
     } catch (error) {
       Message.clear()
       Message.warning('Transaction canceled')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -225,7 +230,7 @@ function Bank() {
           className={styles.btn}
           onClick={() => deposit(nft.tokenId)}
         >
-          Price  {nft.price} E8T, Pledge
+          Price {nft.price} E8T, Pledge
         </Button>
       )
     }
@@ -242,7 +247,7 @@ function Bank() {
           className={styles.btn}
           onClick={() => redemption(nft.tokenId)}
         >
-          已抵押 {nft.price} E8T，赎回
+          Price {nft.price} E8T，Redeem
         </Button>
       )
     }
@@ -253,7 +258,7 @@ function Bank() {
         className={styles.btn}
         onClick={approveRedemption}
       >
-        授权赎回
+        Approve & Redeem
       </Button>
     )
   }
@@ -272,10 +277,10 @@ function Bank() {
           ))}
         </div>
       ) : (
-        <Empty />
+        <Empty description="No Data" />
       )
     }
-    if (!deposited || deposited.length === 0) return <Empty />
+    if (!deposited || deposited.length === 0) return <Empty description="No Data" />
     return (
       <div className={styles.nfts}>
         {deposited?.map(item => (
@@ -293,6 +298,12 @@ function Bank() {
   return (
     <>
       <div className="page-main">
+        <div className="hidden-btn" onClick={() => {
+          Notification.warning({
+            title: 'Warning',
+            content: 'There\'s NFT asset soon to be overdue.'
+          })
+        }} />
         <Spin loading={loading} style={{ display: 'block', width: '100%' }}>
           {store.valid && (
             <>
@@ -343,8 +354,11 @@ function Bank() {
         title="estimate price"
         visible={priceModalVisible}
         onCancel={() => setPriceModalVisible(false)}
-        onOk={onApprove}
         style={{ maxWidth: '90%' }}
+        footer={[
+          <Button key="cancel" onClick={() => setPriceModalVisible(false)}>Cancel</Button>,
+          <Button key="submit" type="primary" onClick={onApprove}>Submit</Button>
+        ]}
       >
         <Form layout="vertical" size="large" ref={priceFormRef}>
           <Form.Item
@@ -364,9 +378,12 @@ function Bank() {
       <Modal
         title="Import NFT"
         visible={visible}
-        onOk={onAdd}
         onCancel={() => setVisible(false)}
         style={{ maxWidth: '90%' }}
+        footer={[
+          <Button key="cancel" onClick={() => setVisible(false)}>Cancel</Button>,
+          <Button key="save" type="primary" onClick={onAdd}>Submit</Button>
+        ]}
       >
         <Form ref={formRef} layout="vertical" size="large">
           <Form.Item
@@ -375,7 +392,7 @@ function Bank() {
             rules={[
               {
                 required: true,
-                message: '请输入TokenId'
+                message: 'Please input TokenId'
               }
             ]}
           >
@@ -387,7 +404,7 @@ function Bank() {
             rules={[
               {
                 required: true,
-                message: '请输入NFT Uri'
+                message: 'Please input NFT Uri'
               }
             ]}
           >

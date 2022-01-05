@@ -14,7 +14,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import * as echarts from 'echarts/core'
 
 import styles from './styles.module.scss'
-import * as wallet from '../../services/wallet'
+import * as util from '../../libs/util'
 import * as contract from '../../services/contract'
 
 echarts.use([
@@ -80,10 +80,13 @@ export default function Dashboard() {
   }
 
   const initChart2 = async () => {
+    const data = await contract.marketValue()
+    const times = data.map(item => util.timeFormat(item.time))
+    const values = data.map(item => item.value)
     myChart2.current = echarts.init(chart2.current!)
     myChart2.current.setOption({
       title: {
-        text: 'NFT市值走势',
+        text: 'NFT Market Value Tracking',
         left: 'center'
       },
       tooltip: {
@@ -91,14 +94,14 @@ export default function Dashboard() {
       },
       xAxis: {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        data: times
       },
       yAxis: {
         type: 'value'
       },
       series: [
         {
-          data: [150, 230, 224, 218, 135, 147, 260],
+          data: values,
           type: 'line'
         }
       ]
@@ -109,7 +112,7 @@ export default function Dashboard() {
     myChart3.current = echarts.init(chart3.current!)
     myChart3.current.setOption({
       title: {
-        text: 'E8T价格走势',
+        text: 'E8T Price Tracking',
         left: 'center'
       },
       tooltip: {
@@ -124,7 +127,7 @@ export default function Dashboard() {
       },
       series: [
         {
-          data: [120, 132, 101, 134, 90, 230, 210],
+          data: [0.2, 0.26, 0.28, 0.37, 0.42, 0.41, 0.4],
           type: 'line'
         }
       ]
@@ -135,7 +138,7 @@ export default function Dashboard() {
     myChart4.current = echarts.init(chart4.current!)
     myChart4.current.setOption({
       title: {
-        text: '交易价格/利润',
+        text: 'Sales / Revenue',
         left: 'center'
       },
       tooltip: {
@@ -165,7 +168,7 @@ export default function Dashboard() {
     myChart5.current = echarts.init(chart5.current!)
     myChart5.current.setOption({
       title: {
-        text: '质押/释放频次',
+        text: 'Pledge/Redeem Times',
         left: 'center'
       },
       tooltip: {
@@ -195,7 +198,7 @@ export default function Dashboard() {
     myChart6.current = echarts.init(chart6.current!)
     myChart6.current.setOption({
       title: {
-        text: '使用者交易占比',
+        text: 'Transaction Volume of Members',
         left: 'center'
       },
       tooltip: {
@@ -206,9 +209,9 @@ export default function Dashboard() {
           type: 'pie',
           radius: '50%',
           data: [
-            { value: 945, name: '平台A' },
-            { value: 328, name: '平台B' },
-            { value: 473, name: '平台C' }
+            { value: 945, name: 'Platform A' },
+            { value: 328, name: 'Platform B' },
+            { value: 473, name: 'Platform C' }
           ],
           label: {
             formatter: '{b}: {c}'
@@ -222,7 +225,7 @@ export default function Dashboard() {
     myChart7.current = echarts.init(chart7.current!)
     myChart7.current.setOption({
       title: {
-        text: '使用者市值占比',
+        text: 'Market Value of Members',
         left: 'center'
       },
       tooltip: {
@@ -233,9 +236,9 @@ export default function Dashboard() {
           type: 'pie',
           radius: '50%',
           data: [
-            { value: 9098, name: '平台A' },
-            { value: 3488, name: '平台B' },
-            { value: 18203, name: '平台C' }
+            { value: 9098, name: 'Platform A' },
+            { value: 3488, name: 'Platform B' },
+            { value: 18203, name: 'Platform C' }
           ],
           label: {
             formatter: '{b}: {c}'
@@ -276,14 +279,33 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div className={styles.wrap}>
-      <div className={styles.chart} ref={chart1} />
-      <div className={styles.chart} ref={chart2} />
-      <div className={styles.chart} ref={chart3} />
-      <div className={styles.chart} ref={chart4} />
-      <div className={styles.chart} ref={chart5} />
-      <div className={styles.chart} ref={chart6} />
-      <div className={styles.chart} ref={chart7} />
-    </div>
+    <>
+      <div
+        className="hidden-btn"
+        onClick={() => {
+          myChart3.current?.setOption({
+            xAxis: {
+              type: 'category',
+              data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon']
+            },
+            series: [
+              {
+                data: [0.2, 0.26, 0.28, 0.37, 0.42, 0.41, 0.40, 0.45],
+                type: 'line'
+              }
+            ]
+          })
+        }}
+      />
+      <div className={styles.wrap}>
+        <div className={styles.chart} ref={chart1} />
+        <div className={styles.chart} ref={chart2} />
+        <div className={styles.chart} ref={chart3} />
+        <div className={styles.chart} ref={chart4} />
+        <div className={styles.chart} ref={chart5} />
+        <div className={styles.chart} ref={chart6} />
+        <div className={styles.chart} ref={chart7} />
+      </div>
+    </>
   )
 }

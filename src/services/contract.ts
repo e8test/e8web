@@ -168,33 +168,39 @@ export async function redemption(tokenId: number) {
 }
 
 export async function marketValue() {
-  const current = await wallet.router.methods.marketValue().call()
-  const value = new BN(current).div(decimals).toNumber()
-  console.log('current', value)
+  type Item = { time: number; value: number }
   const blockNumber = await wallet.web3.eth.getBlockNumber()
   const logs = await wallet.web3.eth.getPastLogs({
     address: config.routerAddr,
     fromBlock: blockNumber - 4900,
     topics: [config.logAddr]
   })
-  const items = []
-  const now = Date.now()
-  for (let i = 1; i <= 7; i++) {
-    const item = {
-      time: now - (now % (604800000 * i)) + 86400000,
-      value: 0
-    }
-    for (const log of logs) {
-      const data = new BN(log.data).div(decimals).toNumber()
-      console.log(data)
-    }
-    if (i === 1) item.value = value
-    items.unshift(item)
-  }
-  console.log(items)
+  const rows: Item[] = []
   for (const log of logs) {
     const data = new BN(log.data).div(decimals).toNumber()
-    console.log(data)
+    const block = await wallet.web3.eth.getBlock(log.blockNumber)
+    rows.push({
+      time: Number(block.timestamp) * 1000,
+      value: data
+    })
   }
-  console.log(logs)
+  const items: Item[] = []
+  const now = Date.now()
+  for (let i = 11; i >= 0; i--) {
+    const time = now - (now % 3600000) - 3600000 * i
+    const item: Item = {
+      time,
+      value: items[11 - i - 1]?.value || 0
+    }
+    for (const row of rows) {
+      if (row.time - (row.time % 3600000) === time) {
+        item.value = row.value
+      }
+    }
+    items.push(item)
+  }
+  const current = await wallet.router.methods.marketValue().call()
+  items[items.length - 1].value = new BN(current).div(decimals).toNumber()
+  console.log(items)
+  return items
 }

@@ -49,7 +49,7 @@ export async function init() {
 
 export async function connect() {
   if (typeof window.ethereum === 'undefined') {
-    return Message.error('请安装MetaMask')
+    return Message.error('Please install MetaMask')
   }
   if (
     window.ethereum &&

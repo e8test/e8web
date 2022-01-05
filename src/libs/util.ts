@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 export function sleep(timeout: number) {
   return new Promise(resolve => {
     setTimeout(() => resolve(0), timeout)
@@ -17,4 +19,8 @@ export async function checkImg(url: string): Promise<boolean> {
     img.onerror = () => resolve(false)
     img.src = url
   })
+}
+
+export function timeFormat(time: number) {
+  return dayjs(time).format('MM/DD HH:mm')
 }
