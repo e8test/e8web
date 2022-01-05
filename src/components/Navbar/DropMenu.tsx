@@ -37,7 +37,7 @@ export default function Dropmenu({ active, onClose }: Props) {
             <Link to="/bank">Bank</Link>
           </Menu.Item>
           <Menu.Item key="/roadmap">
-            <Link to="/roadmap">Raodmap</Link>
+            <Link to="/roadmap">Roadmap</Link>
           </Menu.Item>
           <Menu.Item key="/dashboard">
             <Link to="/dashboard">Dashboard</Link>
