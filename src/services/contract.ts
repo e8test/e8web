@@ -184,22 +184,7 @@ export async function marketValue() {
       value: data
     })
   }
-  const items: Item[] = []
-  const now = Date.now()
-  for (let i = 11; i >= 0; i--) {
-    const time = now - (now % 3600000) - 3600000 * i
-    const item: Item = {
-      time,
-      value: items[11 - i - 1]?.value || 0
-    }
-    for (const row of rows) {
-      if (row.time - (row.time % 3600000) === time) {
-        item.value = row.value
-      }
-    }
-    items.push(item)
-  }
   const current = await wallet.router.methods.marketValue().call()
-  items[items.length - 1].value = new BN(current).div(decimals).toNumber()
-  return items
+  rows[rows.length - 1].value = new BN(current).div(decimals).toNumber()
+  return rows
 }
