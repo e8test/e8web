@@ -29,7 +29,7 @@ export default function Dropmenu({ active, onClose }: Props) {
         getPopupContainer={() => wrapper && wrapper.current!}
         afterClose={() => onClose()}
       >
-        <Menu defaultSelectedKeys={[active]}>
+        <Menu defaultSelectedKeys={[active]} onClickMenuItem={() => onClose()}>
           <Menu.Item key="/">
             <Link to="/">Home</Link>
           </Menu.Item>
