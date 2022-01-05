@@ -1,7 +1,7 @@
 import { Button, Menu } from '@arco-design/web-react'
 import { useState } from 'react'
 import { IconMenu } from '@arco-design/web-react/icon'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import styles from './style.module.scss'
 import Dropmenu from './DropMenu'
@@ -10,6 +10,7 @@ import * as wallet from '../../services/wallet'
 import * as util from '../../libs/util'
 
 export default function Navbar() {
+  const navigate = useNavigate()
   const { pathname } = useLocation()
   const [visible, setVisible] = useState(false)
 
@@ -28,6 +29,7 @@ export default function Navbar() {
           mode="horizontal"
           className={styles.menu}
           defaultSelectedKeys={[pathname]}
+          onClickMenuItem={key => navigate(key)}
         >
           <Menu.Item key="/">
             <Link to="/">Home</Link>

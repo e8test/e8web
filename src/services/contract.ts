@@ -201,6 +201,5 @@ export async function marketValue() {
   }
   const current = await wallet.router.methods.marketValue().call()
   items[items.length - 1].value = new BN(current).div(decimals).toNumber()
-  console.log(items)
   return items
 }
