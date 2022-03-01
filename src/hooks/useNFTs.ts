@@ -142,7 +142,7 @@ export default function useNFTs() {
   const applyValuation = useCallback(
     async (tokenId: number, quote: number) => {
       const trans = await routerContract.applyValuation(
-        CONFIG.tokenAddr,
+        CONFIG.nftAddr,
         tokenId,
         quote
       )
