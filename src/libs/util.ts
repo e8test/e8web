@@ -22,5 +22,6 @@ export async function checkImg(url: string): Promise<boolean> {
 }
 
 export function timeFormat(time: number) {
+  if (time.toString().length === 10) time *= 1000
   return dayjs(time).format('MM/DD HH:mm')
 }

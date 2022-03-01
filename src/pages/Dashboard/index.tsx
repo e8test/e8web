@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import { PieChart, LineChart } from 'echarts/charts'
 import {
   TitleComponent,
@@ -8,14 +8,13 @@ import {
   TransformComponent,
   LegendComponent
 } from 'echarts/components'
-import { Message } from '@arco-design/web-react'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
 import * as echarts from 'echarts/core'
 
-import styles from './styles.module.scss'
-import * as util from '../../libs/util'
-import * as contract from '../../services/contract'
+import styles from './style.module.scss'
+import useCharts from '@/hooks/useCharts'
+import * as util from '@/libs/util'
 
 echarts.use([
   PieChart,
@@ -32,6 +31,7 @@ echarts.use([
 ])
 
 export default function Dashboard() {
+  const { tokenInfo, markets } = useCharts()
   const chart1 = useRef<HTMLDivElement>(null)
   const chart2 = useRef<HTMLDivElement>(null)
   const chart3 = useRef<HTMLDivElement>(null)
@@ -47,15 +47,9 @@ export default function Dashboard() {
   const myChart6 = useRef<echarts.ECharts>()
   const myChart7 = useRef<echarts.ECharts>()
 
-  const initChart1 = async () => {
-    myChart1.current = echarts.init(chart1.current!)
-    const loading = Message.loading({
-      content: 'Loading...',
-      duration: 0
-    })
-    const { reserve, totalSupply } = await contract.tokenInfo()
-    loading()
-    myChart1.current.setOption({
+  const initChart1 = useCallback(async () => {
+    const { reserve, totalSupply } = tokenInfo
+    myChart1.current!.setOption({
       title: {
         text: 'ETF Token Pool',
         left: 'center'
@@ -77,14 +71,12 @@ export default function Dashboard() {
         }
       ]
     })
-  }
+  }, [tokenInfo])
 
-  const initChart2 = async () => {
-    const data = await contract.marketValue()
-    const times = data.map(item => util.timeFormat(item.time))
-    const values = data.map(item => item.value)
-    myChart2.current = echarts.init(chart2.current!)
-    myChart2.current.setOption({
+  const initChart2 = useCallback(async () => {
+    const times = markets.map(item => util.timeFormat(item.time))
+    const values = markets.map(item => item.value)
+    myChart2.current!.setOption({
       title: {
         text: 'NFT Market Value Tracking',
         left: 'center'
@@ -106,7 +98,7 @@ export default function Dashboard() {
         }
       ]
     })
-  }
+  }, [markets])
 
   const initChart3 = async () => {
     myChart3.current = echarts.init(chart3.current!)
@@ -249,8 +241,16 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    initChart1()
-    initChart2()
+    if (tokenInfo) initChart1()
+  }, [initChart1, tokenInfo])
+
+  useEffect(() => {
+    if (myChart2.current) initChart2()
+  }, [initChart2])
+
+  useEffect(() => {
+    myChart1.current = echarts.init(chart1.current!)
+    myChart2.current = echarts.init(chart2.current!)
     initChart3()
     initChart4()
     initChart5()
@@ -290,7 +290,7 @@ export default function Dashboard() {
             },
             series: [
               {
-                data: [0.2, 0.26, 0.28, 0.37, 0.42, 0.41, 0.40, 0.45],
+                data: [0.2, 0.26, 0.28, 0.37, 0.42, 0.41, 0.4, 0.45],
                 type: 'line'
               }
             ]

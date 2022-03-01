@@ -1,35 +1,44 @@
-html,
+@import url(iconfont.css);
+
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   background-color: var(--color-bg-1);
-  color: var(--color-text-2);
+  color: var(--color-text-1);
+  font-family: ArialNew, Rubik, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
-
+.page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .page-main {
+  flex: 1;
   width: 100%;
   max-width: 1500px;
-  margin: 0 auto;
-  padding: 100px 20px 70px 20px;
+  padding: 0 20px;
+  margin: 90px auto 0 auto;
   position: relative;
-  z-index: 1;
 }
-
-body .web3modal-modal-lightbox {
-  z-index: 10000;
+.page-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-
+.page-result {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .hidden-btn {
   position: fixed;
   top: 60px;
@@ -38,9 +47,17 @@ body .web3modal-modal-lightbox {
   height: 50px;
   z-index: 10;
 }
-
-@media screen and (max-width: 678px) {
-  .page-main {
-    padding: 80px 20px 50px 20px;
-  }
+[data-override] .arco-input-inner-wrapper {
+  border: none;
+  background: none;
+}
+.modal-msg .arco-modal-content {
+  font-size: 16px;
+  text-align: center;
+}
+#walletconnect-wrapper {
+  color: #1d2129;
+}
+.arco-modal {
+  max-width: 90%;
 }

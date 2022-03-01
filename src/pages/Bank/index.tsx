@@ -1,125 +1,206 @@
 import { useState, useEffect, useRef } from 'react'
 import {
-  Divider,
-  Message,
+  Notification,
   Button,
+  Space,
+  Divider,
+  Empty,
   Modal,
   Form,
-  Spin,
   Input,
-  Empty,
+  Message,
   InputNumber,
-  FormInstance,
-  Space,
-  Notification
+  FormInstance
 } from '@arco-design/web-react'
 import { IconImage } from '@arco-design/web-react/icon'
-import { observer } from 'mobx-react'
+import { useWeb3React } from '@web3-react/core'
+import classNames from 'classnames'
 
-import styles from './styles.module.scss'
-import store from '../../store'
-import { INft } from '../../models/types'
-import * as wallet from '../../services/wallet'
-import * as contract from '../../services/contract'
-import * as util from '../../libs/util'
+import styles from './style.module.scss'
+import ButtonTab from '@/components/ButtonTab'
+import useNFTs from '@/hooks/useNFTs'
+import * as util from '@/libs/util'
+import { useConnect } from '@/libs/wallet/hooks'
 
-function Bank() {
+export default function Bank() {
+  const {
+    nfts,
+    deposits,
+    listDeposits,
+    depositApproved,
+    approve,
+    add,
+    applyValuation,
+    deposit,
+    approveRedemption,
+    redemption
+  } = useNFTs()
+  const { connect } = useConnect()
+  const { account } = useWeb3React()
+  const [tab, setTab] = useState(0)
+  const [current, setCurrent] = useState<INFT>()
   const priceFormRef = useRef<FormInstance>(null)
   const formRef = useRef<FormInstance>(null)
-  const [tab, setTab] = useState<'deposited' | 'undeposited'>('undeposited')
-  const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
-  const [current, setCurrent] = useState<INft>()
+  const [loading, setLoading] = useState(false)
   const [priceModalVisible, setPriceModalVisible] = useState(false)
-  const [rows, setRows] = useState<INft[]>([])
-  const [deposited, setDeposited] = useState<INft[]>()
-  const [depositedApproved, setDepositedApproved] = useState(false)
 
-  const loadNfts = async () => {
-    const loading = Message.loading({
-      content: 'Loading...',
-      duration: 0
-    })
-    const count = await contract.balanceOf()
-    if (count === 0) return
-    const actions = []
-    for (let i = 0; i < count; i++) {
-      const tokenId = await contract.getTokenId(i)
-      actions.push(contract.getNft(tokenId))
+  useEffect(() => {
+    if (!deposits && tab === 1) {
+      listDeposits()
     }
-    const result = await Promise.all(actions.reverse())
-    console.log(result)
-    setRows(result)
-    loading()
+  }, [deposits, listDeposits, tab])
+
+  if (!account) {
+    return (
+      <div className="page-empty">
+        <Button size="large" type="primary" shape="round" onClick={connect}>
+          Connect Wallet
+        </Button>
+      </div>
+    )
   }
 
-  const loadDeposited = async () => {
-    const loading = Message.loading({
-      content: 'Loading...',
-      duration: 0
-    })
-    const count = await contract.depositedCount()
-    if (count === 0) return
-    const actions = []
-    const approved = await contract.isDepositedApproved()
-    setDepositedApproved(approved)
-    for (let i = 0; i < count; i++) {
-      const tokenId = await contract.getDepositedTokenId(i)
-      actions.push(contract.getDeposited(tokenId))
-    }
-    const result = await Promise.all(actions.reverse())
-    console.log(result)
-    setDeposited(result)
-    loading()
-  }
-
-  const showPriceModal = (nft: INft) => {
+  const showPriceModal = (nft: INFT) => {
     setCurrent(nft)
     setPriceModalVisible(true)
   }
 
+  const renderNFTBtn = (nft: INFT) => {
+    if (
+      !nft.isApproved ||
+      (nft.depositExpire > 0 && nft.depositExpire < Date.now())
+    ) {
+      return (
+        <Button
+          long
+          size="large"
+          className={styles.btn}
+          disabled={loading}
+          onClick={() => showPriceModal(nft)}
+        >
+          #{nft.tokenId}, Approve & Quote
+        </Button>
+      )
+    }
+    if (nft.price && nft.depositExpire && nft.depositExpire > Date.now()) {
+      return (
+        <Button
+          long
+          size="large"
+          type="outline"
+          className={styles.btn}
+          disabled={loading}
+          onClick={() => onDeposit(nft.tokenId)}
+        >
+          #{nft.tokenId}, Price {nft.price.toLocaleString()} E8T, Pledge
+        </Button>
+      )
+    }
+    return <span className={styles.btn}>#{nft.tokenId}, Waiting for pricing</span>
+  }
+
+  const renderDepositBtn = (nft: INFT) => {
+    if (depositApproved) {
+      if (nft.redeemExpire < Date.now()) {
+        return (
+          <Button className={styles.btn} size="large" long disabled>
+            Redemption timeout
+          </Button>
+        )
+      }
+      return (
+        <Button
+          long
+          size="large"
+          type="outline"
+          className={styles.btn}
+          onClick={() => onRredemption(nft.tokenId)}
+        >
+          Price {nft.price} E8T, Redeem
+        </Button>
+      )
+    }
+    return (
+      <Button
+        long
+        size="large"
+        className={styles.btn}
+        onClick={onApproveRedemption}
+      >
+        Approve & Redeem
+      </Button>
+    )
+  }
+
+  const renderNFTS = () => {
+    if (tab === 0 && !nfts.length) {
+      return (
+        <div className="page-empty">
+          <Empty />
+        </div>
+      )
+    }
+    return (
+      <div
+        className={classNames(styles.nfts, {
+          [styles.hide]: tab !== 0
+        })}
+      >
+        {nfts.map(item => (
+          <div key={item.tokenId} className={styles.nft}>
+            <div className={styles.imgbox}>
+              <img src={item.uri} alt="" className={styles.img} />
+            </div>
+            {renderNFTBtn(item)}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  const renderDeposits = () => {
+    if (tab === 1 && (!deposits || deposits.length === 0)) {
+      return (
+        <div className="page-empty">
+          <Empty />
+        </div>
+      )
+    }
+    const rows = deposits || []
+    return (
+      <div
+        className={classNames(styles.nfts, {
+          [styles.hide]: tab !== 1
+        })}
+      >
+        {rows.map(item => (
+          <div key={item.tokenId} className={styles.nft}>
+            <div className={styles.imgbox}>
+              <img src={item.uri} alt="" className={styles.img} />
+            </div>
+            {renderDepositBtn(item)}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   const onApprove = async () => {
     try {
-      await priceFormRef.current?.validate()
+      const { price } = await priceFormRef.current?.validate()
+      setLoading(true)
+      const loading = Message.loading({
+        content: 'Sending transaction...',
+        duration: 0
+      })
       setPriceModalVisible(false)
-      await approve()
+      if (current!.isApproved !== true) {
+        await approve(current!.tokenId)
+      }
+      await applyValuation(current!.tokenId, price)
+      loading()
       setCurrent(undefined)
-    } catch (error) {}
-  }
-
-  const approve = async () => {
-    try {
-      setLoading(true)
-      const loading = Message.loading({
-        content: 'Sending transaction...',
-        duration: 0
-      })
-      await contract.approve(current!.tokenId)
-      loading()
-      loadNfts()
-    } catch (error) {
-      Message.clear()
-      Message.warning('Transaction canceled')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const add = async (tokenId: number, uri: string) => {
-    try {
-      setVisible(false)
-      setLoading(true)
-      const loading = Message.loading({
-        content: 'Sending transaction...',
-        duration: 0
-      })
-      const valid = await util.checkImg(uri)
-      if (valid !== true) return Message.error('Invalid picture')
-      await contract.mint(tokenId, uri)
-      setVisible(false)
-      loading()
-      Message.success('Transaction confirmed')
-      loadNfts()
     } catch (error) {
       Message.clear()
       Message.warning('Transaction canceled')
@@ -131,21 +212,56 @@ function Bank() {
   const onAdd = async () => {
     try {
       const { tokenId, uri } = await formRef.current?.validate()
+      setVisible(false)
+      setLoading(true)
+      const handle = Message.loading({
+        content: 'Sending transaction...',
+        duration: 0
+      })
+      const valid = await util.checkImg(uri)
+      if (valid !== true) {
+        handle()
+        return Message.error('Invalid picture')
+      }
       await add(tokenId, uri)
-    } catch (error) {}
+      setVisible(false)
+      handle()
+      Message.success('Transaction confirmed')
+    } catch (error) {
+      Message.warning('Transaction canceled')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const deposit = async (tokenId: number) => {
+  const onDeposit = async (tokenId: number) => {
     try {
       setLoading(true)
-      const loading = Message.loading({
+      const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
-      await contract.deposit(tokenId)
-      loading()
-      loadNfts()
-      loadDeposited()
+      await deposit(tokenId)
+      handle()
+      Message.success('Transaction confirmed')
+    } catch (error) {
+      console.trace(error)
+      Message.clear()
+      Message.warning('Transaction canceled')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const onRredemption = async (tokenId: number) => {
+    try {
+      setLoading(true)
+      const handle = Message.loading({
+        content: 'Sending transaction...',
+        duration: 0
+      })
+      await redemption(tokenId)
+      handle()
       Message.success('Transaction confirmed')
     } catch (error) {
       Message.clear()
@@ -155,209 +271,67 @@ function Bank() {
     }
   }
 
-  const redemption = async (tokenId: number) => {
+  const onApproveRedemption = async () => {
     try {
       setLoading(true)
-      const loading = Message.loading({
+      const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
-      await contract.redemption(tokenId)
-      loading()
-      loadDeposited()
-      loadNfts()
-      Message.success('Transaction confirmed')
+      await approveRedemption()
+      handle()
     } catch (error) {
       Message.clear()
       Message.warning('Transaction canceled')
     } finally {
       setLoading(false)
     }
-  }
-
-  const approveRedemption = async () => {
-    try {
-      setLoading(true)
-      const loading = Message.loading({
-        content: 'Sending transaction...',
-        duration: 0
-      })
-      await contract.approveRedemption()
-      loading()
-      loadDeposited()
-    } catch (error) {
-      Message.clear()
-      Message.warning('Transaction canceled')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (tab === 'deposited' && !deposited) {
-      setDeposited([])
-      loadDeposited()
-    }
-  }, [tab])
-
-  useEffect(() => {
-    formRef.current?.resetFields()
-  }, [visible])
-
-  useEffect(() => {
-    if (store.valid) loadNfts()
-  }, [])
-
-  const renderBtn = (nft: INft) => {
-    if (!nft.approved) {
-      return (
-        <Button
-          long
-          size="large"
-          className={styles.btn}
-          onClick={() => showPriceModal(nft)}
-        >
-          Approve & Quote
-        </Button>
-      )
-    }
-    if (nft.price && nft.expire) {
-      return (
-        <Button
-          long
-          size="large"
-          type="outline"
-          className={styles.btn}
-          onClick={() => deposit(nft.tokenId)}
-        >
-          Price {nft.price} E8T, Pledge
-        </Button>
-      )
-    }
-    return <span className={styles.btn}>waiting for pricing</span>
-  }
-
-  const renderDepositedBtn = (nft: INft) => {
-    if (depositedApproved) {
-      return (
-        <Button
-          long
-          size="large"
-          type="outline"
-          className={styles.btn}
-          onClick={() => redemption(nft.tokenId)}
-        >
-          Price {nft.price} E8T，Redeem
-        </Button>
-      )
-    }
-    return (
-      <Button
-        long
-        size="large"
-        className={styles.btn}
-        onClick={approveRedemption}
-      >
-        Approve & Redeem
-      </Button>
-    )
-  }
-
-  const renderList = () => {
-    if (tab === 'undeposited') {
-      return rows.length > 0 ? (
-        <div className={styles.nfts}>
-          {rows.map(item => (
-            <div key={item.tokenId} className={styles.nft}>
-              <div className={styles.imgbox}>
-                <img src={item.uri} alt="" className={styles.img} />
-              </div>
-              {renderBtn(item)}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <Empty description="No Data" />
-      )
-    }
-    if (!deposited || deposited.length === 0) return <Empty description="No Data" />
-    return (
-      <div className={styles.nfts}>
-        {deposited?.map(item => (
-          <div key={item.tokenId} className={styles.nft}>
-            <div className={styles.imgbox}>
-              <img src={item.uri} alt="" className={styles.img} />
-            </div>
-            {renderDepositedBtn(item)}
-          </div>
-        ))}
-      </div>
-    )
   }
 
   return (
-    <>
-      <div className="page-main">
-        <div className="hidden-btn" onClick={() => {
+    <div className="page-main">
+      <div
+        className="hidden-btn"
+        onClick={() => {
           Notification.warning({
             title: 'Warning',
-            content: 'There\'s NFT asset soon to be overdue.'
+            content: "There's NFT asset soon to be overdue."
           })
-        }} />
-        <Spin loading={loading} style={{ display: 'block', width: '100%' }}>
-          {store.valid && (
-            <>
-              <div>
-                <Space>
-                  <Button.Group>
-                    <Button
-                      type={tab === 'undeposited' ? 'primary' : 'outline'}
-                      onClick={() => setTab('undeposited')}
-                      size="large"
-                    >
-                      NFTs
-                    </Button>
-                    <Button
-                      type={tab === 'deposited' ? 'primary' : 'outline'}
-                      onClick={() => setTab('deposited')}
-                      size="large"
-                    >
-                      mortgaged
-                    </Button>
-                  </Button.Group>
-                  {tab === 'undeposited' && (
-                    <Button
-                      type="primary"
-                      size="large"
-                      onClick={() => setVisible(true)}
-                      icon={<IconImage />}
-                    >
-                      Import NFT
-                    </Button>
-                  )}
-                </Space>
-              </div>
-              <Divider />
-              {renderList()}
-            </>
-          )}
-          {!store.valid && (
-            <div className={styles.empty}>
-              <Button type="primary" size="large" onClick={wallet.connect}>
-                Connect Wallet
-              </Button>
-            </div>
-          )}
-        </Spin>
-      </div>
+        }}
+      />
+      <Space>
+        <ButtonTab
+          value={tab}
+          onChange={value => setTab(value)}
+          tabs={['NFTs', 'mortgaged']}
+        />
+        {tab === 0 && (
+          <Button
+            type="primary"
+            size="large"
+            icon={<IconImage />}
+            disabled={loading}
+            onClick={() => setVisible(true)}
+          >
+            Import NFT
+          </Button>
+        )}
+      </Space>
+      <Divider />
+      {renderNFTS()}
+      {renderDeposits()}
       <Modal
         title="estimate price"
         visible={priceModalVisible}
         onCancel={() => setPriceModalVisible(false)}
         style={{ maxWidth: '90%' }}
         footer={[
-          <Button key="cancel" onClick={() => setPriceModalVisible(false)}>Cancel</Button>,
-          <Button key="submit" type="primary" onClick={onApprove}>Submit</Button>
+          <Button key="cancel" onClick={() => setPriceModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={onApprove}>
+            Submit
+          </Button>
         ]}
       >
         <Form layout="vertical" size="large" ref={priceFormRef}>
@@ -381,8 +355,12 @@ function Bank() {
         onCancel={() => setVisible(false)}
         style={{ maxWidth: '90%' }}
         footer={[
-          <Button key="cancel" onClick={() => setVisible(false)}>Cancel</Button>,
-          <Button key="save" type="primary" onClick={onAdd}>Submit</Button>
+          <Button key="cancel" onClick={() => setVisible(false)}>
+            Cancel
+          </Button>,
+          <Button key="save" type="primary" onClick={onAdd}>
+            Submit
+          </Button>
         ]}
       >
         <Form ref={formRef} layout="vertical" size="large">
@@ -412,8 +390,6 @@ function Bank() {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   )
 }
-
-export default observer(Bank)
