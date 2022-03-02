@@ -141,10 +141,11 @@ export default function useNFTs() {
 
   const applyValuation = useCallback(
     async (tokenId: number, quote: number) => {
+      console.log(ethers.utils.parseEther(quote.toString()))
       const trans = await routerContract.applyValuation(
         CONFIG.nftAddr,
         tokenId,
-        quote
+        ethers.utils.parseEther(quote.toString())
       )
       await trans.wait(1)
       listNFTs()

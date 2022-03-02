@@ -55,7 +55,7 @@ export default function useApplies() {
     const rows = infos
       .map((info, i) => ({
         tokenId: info.tokenId.toNumber(),
-        quote: info.quote.toNumber(),
+        quote: Number(ethers.utils.formatUnits(info.quote)),
         timestamp: info.timestamp.toNumber(),
         token: info.token,
         uri: nfts[i].uri,
