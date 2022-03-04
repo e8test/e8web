@@ -53,7 +53,7 @@
 ```
 
 
-## 5. 用户赎回NFT
+## 6. 用户赎回NFT
 ```
     uint256 index = router.getDepositIndex(address token, uint256 tokenId); // 根据NFT的信息获取抵押的index
 (address owner, uint256 value, uint256 timestamp, uint256 redeemDeadline, uint256 previous, uint256 next) = router.getDepositedNFTByIndex(index); // 根据抵押的index获取抵押信息
@@ -61,3 +61,13 @@
         router.redemption(token, tokenId); // 在赎回时效内可以赎回
     }    
 ```
+
+## 7. 系统赎回NFT
+```
+    uint256 index = router.getDepositIndex(address token, uint256 tokenId); // 根据NFT的信息获取抵押的index
+(address owner, uint256 value, uint256 timestamp, uint256 redeemDeadline, uint256 previous, uint256 next) = router.getDepositedNFTByIndex(index); // 根据抵押的index获取抵押信息
+    if(redeemDeadline < time.now()) {
+        router.systemRedemption(token, tokenId); // 在赎回时效后可以赎回
+    }    
+```
+
