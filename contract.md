@@ -64,10 +64,17 @@
 
 ## 7. 系统赎回NFT
 ```
-    uint256 index = router.getDepositIndex(address token, uint256 tokenId); // 根据NFT的信息获取抵押的index
+    // 获取超时的NFT的列表
+    []uint256 list = [];    // 存超时的index
+    uint256 index = router.lastDepositedNFTIndex(); // 获取最后一个抵押的NFT
 (address owner, uint256 value, uint256 timestamp, uint256 redeemDeadline, uint256 previous, uint256 next) = router.getDepositedNFTByIndex(index); // 根据抵押的index获取抵押信息
-    if(redeemDeadline < time.now()) {
-        router.systemRedemption(token, tokenId); // 在赎回时效后可以赎回
-    }    
+    while(redeemDeadline < time.now()) {
+        list.push(index);
+        index = previous;
+        (address owner, uint256 value, uint256 timestamp, uint256 redeemDeadline, uint256 previous, uint256 next) = router.getDepositedNFTByIndex(index); // 根据抵押的index获取抵押信息
+    }
+
+    // 根据token和tokenId赎回到拍卖合约
+    router.systemRedemption(token, tokenId); // 在赎回时效后可以赎回
 ```
 
