@@ -45,8 +45,9 @@ export default function useNFTs() {
       ])
       const uri = result[0]
       const isApproved = result[1] === CONFIG.routerAddr
-      console.log(result[2])
       const [quote, value, depositExpire, redeemExpire] = result[2]
+      const depositExpireTime = depositExpire.toNumber() * 1000
+      const redeemExpireTime = redeemExpire.toNumber() * 1000
       const info: INFT = {
         tokenId: tokenId.toNumber(),
         uri,
@@ -54,12 +55,36 @@ export default function useNFTs() {
         owner: account!,
         quote: Number(ethers.utils.formatUnits(quote)),
         price: Number(ethers.utils.formatUnits(value)),
-        depositExpire: depositExpire.toNumber() * 1000,
-        redeemExpire: redeemExpire.toNumber() * 1000
+        depositExpire: depositExpireTime,
+        redeemExpire: redeemExpireTime,
+        timestamp: 0
       }
       return info
     },
     [nftContract, routerContract, account]
+  )
+
+  const getDepositIndex = useCallback(
+    async (tokenId: number) => {
+      const status = await routerContract.getNFTStatus(
+        CONFIG.nftAddr,
+        tokenId
+      )
+      const expires = status[3].toNumber() * 1000 + Date.now()
+      let index = await routerContract.lastDepositedNFTIndex()
+      const result = await routerContract.getDepositedNFTByIndex(index)
+      let redeemDeadline = result.redeemDeadline.toNumber() * 1000
+      let previous = result.previous.toNumber()
+      console.log(redeemDeadline, previous, index.toNumber())
+      while (redeemDeadline > expires) {
+        index = previous
+        const result = await routerContract.getDepositedNFTByIndex(index)
+        redeemDeadline = result.redeemDeadline.toNumber() * 1000
+        previous = result.previous.toNumber()
+      }
+      return index
+    },
+    [routerContract]
   )
 
   // 获取NFT列表
@@ -96,17 +121,23 @@ export default function useNFTs() {
       routerContract.getDepositedCount(account),
       tokenContract.allowance(account, CONFIG.routerAddr)
     ])
-    const idActions = []
+    const indexActions = []
     for (let i = 0; i < count.toNumber(); i++) {
-      idActions.push(routerContract.getDepositedOfOwnerByIndex(account, i))
+      indexActions.push(routerContract.getDepositedNFTIndexByPositionOfOwner(account, i))
     }
+    const indexResult = await Promise.all(indexActions)
+    const idActions = indexResult.map(index => routerContract.getDepositedNFTByIndex(index))
     const idResult = await Promise.all(idActions)
     const ids = idResult.map(item => item.tokenId)
     const infoActions = []
     for (const id of ids) {
       infoActions.push(getNFT(id))
     }
-    const rows = await Promise.all(infoActions.reverse())
+    let rows = await Promise.all(infoActions)
+    rows = rows.map((row, index) => ({
+      ...row,
+      timestamp: idResult[index].timestamp.toNumber() * 1000
+    })).reverse()
     setDepositApproved(allowance.gt(0))
     setDeposits(rows)
     console.log('=============deposits=============')
@@ -141,7 +172,6 @@ export default function useNFTs() {
 
   const applyValuation = useCallback(
     async (tokenId: number, quote: number) => {
-      console.log(ethers.utils.parseEther(quote.toString()))
       const trans = await routerContract.applyValuation(
         CONFIG.nftAddr,
         tokenId,
@@ -155,24 +185,22 @@ export default function useNFTs() {
 
   const deposit = useCallback(
     async (tokenId: number) => {
-      const trans = await routerContract.deposit(CONFIG.nftAddr, tokenId)
+      const index = await getDepositIndex(tokenId)
+      const trans = await routerContract.deposit(CONFIG.nftAddr, tokenId, index + 1)
       await trans.wait(1)
       listNFTs()
     },
-    [routerContract, listNFTs]
+    [routerContract, getDepositIndex, listNFTs]
   )
 
-  const approveRedemption = useCallback(
-    async () => {
-      const trans = await tokenContract.approve(
-        CONFIG.routerAddr,
-        ethers.constants.MaxUint256
-      )
-      await trans.wait(1)
-      listDeposits()
-    },
-    [tokenContract, listDeposits]
-  )
+  const approveRedemption = useCallback(async () => {
+    const trans = await tokenContract.approve(
+      CONFIG.routerAddr,
+      ethers.constants.MaxUint256
+    )
+    await trans.wait(1)
+    listDeposits()
+  }, [tokenContract, listDeposits])
 
   const redemption = useCallback(
     async (tokenId: number) => {

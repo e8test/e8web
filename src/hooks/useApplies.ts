@@ -80,7 +80,7 @@ export default function useApplies() {
         tokenId,
         ethers.utils.parseEther(price + ''),
         depositExpire,
-        redeemExpire
+        Math.trunc(redeemExpire)
       )
       await trans.wait(1)
       listApplies()

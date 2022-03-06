@@ -103,7 +103,7 @@ export default function Applies() {
       let { price, depositExpire, redeemExpire } =
         await formRef.current?.validate()
       depositExpire = dayjs(depositExpire).unix()
-      redeemExpire = dayjs(redeemExpire).unix()
+      redeemExpire = redeemExpire * 3600 * 24
       return { price, depositExpire, redeemExpire }
     } catch {
       return null
@@ -166,7 +166,11 @@ export default function Applies() {
           </Button>
         ]}
       >
-        <Form ref={formRef} layout="vertical" size="large">
+        <Form ref={formRef} layout="vertical" size="large" initialValues={{
+          price: current?.quote,
+          depositExpire: dayjs().add(7, 'day').format('YYYY-MM-DD HH:mm:ss'),
+          redeemExpire: 60
+        }}>
           <Form.Item
             label="Price"
             field="price"
@@ -207,7 +211,7 @@ export default function Applies() {
               }
             ]}
           >
-            <DatePicker showTime />
+            <InputNumber min={0.001} precision={3} step={1} suffix="Days" />
           </Form.Item>
         </Form>
       </Modal>

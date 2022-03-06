@@ -23,6 +23,7 @@ declare interface INFT {
   tokenId: number
   uri: string
   owner: string
+  timestamp: number
 }
 
 declare interface IApply {

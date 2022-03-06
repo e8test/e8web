@@ -102,10 +102,10 @@ export default function Bank() {
 
   const renderDepositBtn = (nft: INFT) => {
     if (depositApproved) {
-      if (nft.redeemExpire < Date.now()) {
+      if (nft.redeemExpire + nft.timestamp < Date.now()) {
         return (
           <Button className={styles.btn} size="large" long disabled>
-            Redemption timeout
+            #{nft.tokenId}, Redemption timeout
           </Button>
         )
       }
@@ -117,7 +117,7 @@ export default function Bank() {
           className={styles.btn}
           onClick={() => onRredemption(nft.tokenId)}
         >
-          Price {nft.price} E8T, Redeem
+          #{nft.tokenId}, Price {nft.price} E8T, Redeem
         </Button>
       )
     }
