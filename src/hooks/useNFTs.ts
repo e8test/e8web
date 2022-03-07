@@ -71,17 +71,18 @@ export default function useNFTs() {
         tokenId
       )
       const expires = status[3].toNumber() * 1000 + Date.now()
-      let index = await routerContract.lastDepositedNFTIndex()
-      const result = await routerContract.getDepositedNFTByIndex(index)
-      let redeemDeadline = result.redeemDeadline.toNumber() * 1000
-      let previous = result.previous.toNumber()
-      console.log(redeemDeadline, previous, index.toNumber())
-      while (redeemDeadline > expires) {
-        index = previous
-        const result = await routerContract.getDepositedNFTByIndex(index)
-        redeemDeadline = result.redeemDeadline.toNumber() * 1000
-        previous = result.previous.toNumber()
-      }
+      let index = await routerContract.findDepositPosition(status[3].toNumber())
+      console.log("------index=", index, ",       expire", status[3].toNumber())
+      // const result = await routerContract.getDepositedNFTByIndex(index)
+      // let redeemDeadline = result.redeemDeadline.toNumber() * 1000
+      // let previous = result.previous.toNumber()
+      // console.log(redeemDeadline, previous, index.toNumber())
+      // while (redeemDeadline > expires) {
+      //   index = previous
+      //   const result = await routerContract.getDepositedNFTByIndex(index)
+      //   redeemDeadline = result.redeemDeadline.toNumber() * 1000
+      //   previous = result.previous.toNumber()
+      // }
       return index
     },
     [routerContract]

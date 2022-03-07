@@ -5,7 +5,7 @@ const CONFIGS: IConfig = {
       rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
       ethscan: 'https://testnet.bscscan.com',
       nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
-      routerAddr: '0x4105F6aA2A20696440F88EeaA3DFB80c85595209',
+      routerAddr: '0x52A36911c026dfB4B0BBbde297fc21b0a20473E0',
       tokenAddr: '0x50c0b7228dd8Aa6B28B3848Ba5fe762fFeE84AA3',
       logAddr: '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
     }
