@@ -83,6 +83,19 @@ export default function Bank() {
         </Button>
       )
     }
+    if (nft.isApproved && !nft.quote && !nft.price) {
+      return (
+        <Button
+          long
+          size="large"
+          className={styles.btn}
+          disabled={loading}
+          onClick={() => showPriceModal(nft)}
+        >
+          #{nft.tokenId}, Quote
+        </Button>
+      )
+    }
     if (nft.price && nft.depositExpire && nft.depositExpire > Date.now()) {
       return (
         <Button
@@ -93,7 +106,7 @@ export default function Bank() {
           disabled={loading}
           onClick={() => onDeposit(nft.tokenId)}
         >
-          #{nft.tokenId}, Price {nft.price.toLocaleString()} E8T, Pledge
+          #{nft.tokenId}, Price {nft.price} E8T, Pledge
         </Button>
       )
     }
