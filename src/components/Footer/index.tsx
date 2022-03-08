@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <Divider />
       <div className={styles.copyright}>
-        Copyright 2022 ETF & Liquidity System All Rights Reserved
+        Copyright 2022 Index & Liquidity System All Rights Reserved
       </div>
     </footer>
   )

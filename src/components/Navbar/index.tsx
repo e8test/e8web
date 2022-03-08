@@ -14,7 +14,7 @@ export default function Navbar() {
 
   return (
     <header className={styles.navbar}>
-      <div className={styles.logo}>ETF & Liquidity</div>
+      <div className={styles.logo}>Index & Liquidity</div>
       <div className={styles.menus}>
         <Menu
           mode="horizontal"

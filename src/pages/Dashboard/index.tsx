@@ -51,7 +51,7 @@ export default function Dashboard() {
     const { reserve, totalSupply } = tokenInfo
     myChart1.current!.setOption({
       title: {
-        text: 'ETF Token Pool',
+        text: 'Index Token Pool',
         left: 'center'
       },
       tooltip: {
