@@ -128,7 +128,7 @@ export default function Bank() {
           size="large"
           type="outline"
           className={styles.btn}
-          onClick={() => onRredemption(nft.tokenId)}
+          onClick={() => onRedemption(nft.tokenId)}
         >
           #{nft.tokenId}, Price {nft.price} E8T, Redeem
         </Button>
@@ -266,7 +266,7 @@ export default function Bank() {
     }
   }
 
-  const onRredemption = async (tokenId: number) => {
+  const onRedemption = async (tokenId: number) => {
     try {
       setLoading(true)
       const handle = Message.loading({
