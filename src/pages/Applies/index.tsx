@@ -148,7 +148,7 @@ export default function Applies() {
     <div className="page-main">
       <Breadcrumb className={styles.toolbar}>
         <Breadcrumb.Item>Console</Breadcrumb.Item>
-        <Breadcrumb.Item>Applies</Breadcrumb.Item>
+        <Breadcrumb.Item>Application</Breadcrumb.Item>
       </Breadcrumb>
       <Table columns={columns} data={applies} rowKey="tokenId" />
       <Modal

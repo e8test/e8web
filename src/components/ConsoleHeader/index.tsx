@@ -21,7 +21,7 @@ export default function ConsoleHeader() {
           className={styles.menu}
         >
           <Menu.Item key="/console" className={styles.menu_link}>
-            <Link to="/console">Applies</Link>
+            <Link to="/console">Application</Link>
           </Menu.Item>
           <Menu.Item key="/console/expires" className={styles.menu_link}>
             <Link to="/console/expires">Expires</Link>
