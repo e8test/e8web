@@ -6,6 +6,7 @@ declare interface IConfig {
     [chainId: number]: {
       rpc: string
       ethscan: string
+      tokenName: string
       nftAddr: string
       routerAddr: string
       tokenAddr: string

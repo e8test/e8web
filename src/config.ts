@@ -4,6 +4,7 @@ const CONFIGS: IConfig = {
     97: {
       rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
       ethscan: 'https://testnet.bscscan.com',
+      tokenName: 'E8INDEX',
       nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
       routerAddr: '0x0CF75A37c5691E2773CD40EC819Fe0d50D14ed66',
       tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',

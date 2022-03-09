@@ -56,7 +56,7 @@ export default function Applies() {
       title: 'Ask',
       dataIndex: 'quote',
       width: 120,
-      render: value => `${value} E8T`
+      render: value => `${value} ${CONFIG.tokenName}`
     },
     {
       title: 'Time',
@@ -186,7 +186,7 @@ export default function Applies() {
               step={0.1}
               precision={2}
               placeholder="Price"
-              suffix="E8T"
+              suffix={CONFIG.tokenName}
             />
           </Form.Item>
           <Form.Item

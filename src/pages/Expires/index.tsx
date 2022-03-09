@@ -47,7 +47,7 @@ export default function Expires() {
       title: 'Price',
       dataIndex: 'price',
       width: 120,
-      render: value => `${value} E8T`
+      render: value => `${value} ${CONFIG.tokenName}`
     },
     {
       title: 'Expires',

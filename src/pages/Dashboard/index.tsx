@@ -13,6 +13,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import * as echarts from 'echarts/core'
 
 import styles from './style.module.scss'
+import CONFIG from '@/config'
 import useCharts from '@/hooks/useCharts'
 import * as util from '@/libs/util'
 
@@ -104,7 +105,7 @@ export default function Dashboard() {
     myChart3.current = echarts.init(chart3.current!)
     myChart3.current.setOption({
       title: {
-        text: 'E8T Price Tracking',
+        text: CONFIG.tokenName + ' Price Tracking',
         left: 'center'
       },
       tooltip: {

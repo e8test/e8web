@@ -2,6 +2,7 @@ import { useMemo, useCallback, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import { ethers, BigNumber } from 'ethers'
+import { Message } from '@arco-design/web-react'
 
 import CONFIG from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
@@ -54,6 +55,10 @@ export default function useExpires() {
   )
 
   const listExpires = useCallback(async () => {
+    const handle = Message.loading({
+      content: 'Loading...',
+      duration: 0
+    })
     const items: any[] = []
     let index = await routerContract.lastDepositedNFTIndex()
     if (index.toNumber() > 0) {
@@ -86,6 +91,7 @@ export default function useExpires() {
     console.log('=============expires=============')
     console.log(rows)
     setExpires(rows)
+    handle()
   }, [routerContract, getNFT, setExpires])
 
   const redemption = useCallback(

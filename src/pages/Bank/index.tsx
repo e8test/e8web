@@ -17,6 +17,7 @@ import { useWeb3React } from '@web3-react/core'
 import classNames from 'classnames'
 
 import styles from './style.module.scss'
+import CONFIG from '@/config'
 import ButtonTab from '@/components/ButtonTab'
 import useNFTs from '@/hooks/useNFTs'
 import * as util from '@/libs/util'
@@ -106,7 +107,7 @@ export default function Bank() {
           disabled={loading}
           onClick={() => onDeposit(nft.tokenId)}
         >
-          #{nft.tokenId}, Price {nft.price} E8T, Pledge
+          #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Pledge
         </Button>
       )
     }
@@ -130,7 +131,7 @@ export default function Bank() {
           className={styles.btn}
           onClick={() => onRedemption(nft.tokenId)}
         >
-          #{nft.tokenId}, Price {nft.price} E8T, Redeem
+          #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Redeem
         </Button>
       )
     }
