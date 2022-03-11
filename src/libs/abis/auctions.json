@@ -259,6 +259,30 @@
         "internalType": "uint256",
         "name": "index",
         "type": "uint256"
+      }
+    ],
+    "name": "getAuctionStatus",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "status",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "winner",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
