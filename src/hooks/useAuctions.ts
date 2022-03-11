@@ -46,6 +46,8 @@ export default function useAuctions() {
 
   const getOwner = useCallback(async () => {
     const owner = await auctionContract.owner()
+    console.log('=============auctions owner=============')
+    console.log(owner)
     setOwner(owner)
   }, [auctionContract, setOwner])
 
