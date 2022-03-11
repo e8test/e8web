@@ -28,7 +28,6 @@ export default function Navbar() {
           <Menu.Item key="/bank" className={styles.menu_link}>
             <Link to="/bank">Bank</Link>
           </Menu.Item>
-          
           <Menu.Item key="/market" className={styles.menu_link}>
             <Link to="/market">Market</Link>
           </Menu.Item>
@@ -53,6 +52,7 @@ export default function Navbar() {
             <Menu onClickMenuItem={key => navigate(key)}>
               <Menu.Item key="/">Home</Menu.Item>
               <Menu.Item key="/bank">Bank</Menu.Item>
+              <Menu.Item key="/market">Market</Menu.Item>
               <Menu.Item key="/roadmap">Roadmap</Menu.Item>
               <Menu.Item key="/dashboard">Dashboard</Menu.Item>
             </Menu>
