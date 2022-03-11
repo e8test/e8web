@@ -9,10 +9,10 @@ import Bank from '@/pages/Bank'
 import Dashboard from '@/pages/Dashboard'
 import Home from '@/pages/Emptys/Home'
 import Roadmap from '@/pages/Emptys/Roadmap'
-import Market from '@/pages/Emptys/Market'
 import Console from '@/pages/Console'
 import Applies from '@/pages/Applies'
 import Expires from '@/pages/Expires'
+import Auctions from '@/pages/Auctions'
 
 export default function App() {
   const { error } = useWeb3React()
@@ -30,7 +30,7 @@ export default function App() {
           <Route path="" element={<Home />} />
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="bank" element={<Bank />} />
-          <Route path="market" element={<Market />} />
+          <Route path="market" element={<Auctions />} />
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
         <Route path="/console" element={<Console />}>

@@ -16,6 +16,7 @@ export default function useAdmin() {
 
   const getAdmin = useCallback(async () => {
     const result = await routerContract.owner()
+    console.log('admin', result)
     setAdmin(result.toLowerCase())
   }, [routerContract, setAdmin])
 

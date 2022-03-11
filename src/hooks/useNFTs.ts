@@ -45,9 +45,10 @@ export default function useNFTs() {
       ])
       const uri = result[0]
       const isApproved = result[1] === CONFIG.routerAddr
-      const [quote, value, depositExpire, redeemExpire] = result[2]
+      const [quote, value, depositExpire, redeemExpire, lastApply] = result[2]
       const depositExpireTime = depositExpire.toNumber() * 1000
       const redeemExpireTime = redeemExpire.toNumber() * 1000
+      const lastApplyTime = lastApply.toNumber() * 1000
       const info: INFT = {
         tokenId: tokenId.toNumber(),
         uri,
@@ -57,6 +58,7 @@ export default function useNFTs() {
         price: Number(ethers.utils.formatUnits(value)),
         depositExpire: depositExpireTime,
         redeemExpire: redeemExpireTime,
+        lastApplyTime,
         timestamp: 0
       }
       return info
@@ -105,7 +107,6 @@ export default function useNFTs() {
       content: 'Loading...',
       duration: 0
     })
-    setDeposits([])
     const [count, allowance] = await Promise.all([
       routerContract.getDepositedCount(account),
       tokenContract.allowance(account, CONFIG.routerAddr)

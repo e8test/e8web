@@ -1,0 +1,55 @@
+.nfts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 50px;
+}
+.hide {
+  display: none;
+}
+.nft {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100%;
+}
+.imgbox {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.img {
+  width: 100%;
+}
+.btn {
+  margin-top: 15px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  div {
+    font-size: 14px!important;
+    color: rgb(var(--primary-6))!important;
+  }
+}
+.empty {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+.status {
+  width: 100%;
+  padding: 10px 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 12px;
+}
+.countdown {
+  margin-right: 15px;
+}

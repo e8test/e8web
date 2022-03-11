@@ -8,6 +8,7 @@ declare interface IConfig {
       ethscan: string
       tokenName: string
       nftAddr: string
+      auctions: string
       routerAddr: string
       tokenAddr: string
       logAddr: string
@@ -24,6 +25,7 @@ declare interface INFT {
   tokenId: number
   uri: string
   owner: string
+  lastApplyTime: number
   timestamp: number
 }
 
@@ -33,4 +35,19 @@ declare interface IApply {
   timestamp: number
   token: string
   uri: string
+}
+
+declare interface IAuction {
+  index: number
+  bidTimes: number
+  lastPrice: number
+  previous: number
+  startingPrice: number
+  status: number
+  timeout: number
+  token: string
+  tokenId: number
+  uri: string
+  status: number
+  winner: string
 }

@@ -6,8 +6,8 @@ const CONFIGS: IConfig = {
       ethscan: 'https://testnet.bscscan.com',
       tokenName: 'E8INDEX',
       nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
-      routerAddr: '0x3a2157E493F9A247345407013eCFF981f877aD1A',
-      auctions: '0xfBe7AF00DFA64e429f8C600c4e5F51979BDBDa58',
+      routerAddr: '0x8E6B9956F69A4A5DbaE6A50059Fc2C999519C42c',
+      auctions: '0x5B88E244C714B8E5233def3655475Fb4864436eb',
       tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',
       logAddr: '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
     }

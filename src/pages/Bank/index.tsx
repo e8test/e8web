@@ -85,17 +85,34 @@ export default function Bank() {
       )
     }
     if (nft.isApproved && !nft.quote && !nft.price) {
-      return (
-        <Button
-          long
-          size="large"
-          className={styles.btn}
-          disabled={loading}
-          onClick={() => showPriceModal(nft)}
-        >
-          #{nft.tokenId}, Quote
-        </Button>
-      )
+      if (
+        !nft.lastApplyTime ||
+        Date.now() - nft.lastApplyTime > 72 * 3600 * 1000
+      ) {
+        return (
+          <Button
+            long
+            size="large"
+            className={styles.btn}
+            disabled={loading}
+            onClick={() => showPriceModal(nft)}
+          >
+            #{nft.tokenId}, Quote
+          </Button>
+        )
+      } else {
+        return (
+          <Button
+            long
+            size="large"
+            status="danger"
+            className={styles.btn}
+            disabled
+          >
+            #{nft.tokenId}, Quote Rejected
+          </Button>
+        )
+      }
     }
     if (nft.price && nft.depositExpire && nft.depositExpire > Date.now()) {
       return (
@@ -111,15 +128,23 @@ export default function Bank() {
         </Button>
       )
     }
-    return <span className={styles.btn}>#{nft.tokenId}, Waiting for pricing</span>
+    return (
+      <span className={styles.btn}>#{nft.tokenId}, Waiting for pricing</span>
+    )
   }
 
   const renderDepositBtn = (nft: INFT) => {
     if (depositApproved) {
       if (nft.redeemExpire + nft.timestamp < Date.now()) {
         return (
-          <Button className={styles.btn} size="large" long disabled>
-            #{nft.tokenId}, Redemption timeout
+          <Button
+            className={styles.btn}
+            status="danger"
+            size="large"
+            long
+            disabled
+          >
+            #{nft.tokenId}, Redemption Timeout
           </Button>
         )
       }
@@ -260,10 +285,10 @@ export default function Bank() {
       Message.success('Transaction confirmed')
     } catch (error) {
       console.trace(error)
-      Message.clear()
       Message.warning('Transaction canceled')
     } finally {
       setLoading(false)
+      Message.clear()
     }
   }
 

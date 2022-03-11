@@ -37,6 +37,8 @@ export default function useApplies() {
   )
 
   const listApplies = useCallback(async () => {
+    const auctions = await routerContract.auctions()
+    console.log('auctions', auctions)
     const handle = Message.loading({
       content: 'Loading...',
       duration: 0
