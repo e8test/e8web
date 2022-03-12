@@ -22,12 +22,10 @@ export default function Auctions() {
     auctions,
     balance,
     allowance,
-    owner,
     approve,
     bid,
     list,
-    takeAway,
-    destroy
+    takeAway
   } = useAuctions()
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState<IAuction>()
@@ -35,20 +33,6 @@ export default function Auctions() {
 
   const renderBtn = (nft: IAuction) => {
     if (nft.status === 300) {
-      if (owner === account) {
-        return (
-          <Button
-            type="primary"
-            status="danger"
-            long
-            size="large"
-            loading={loading}
-            onClick={() => onDestroy(nft.index)}
-          >
-            Auction Failed, Destroy
-          </Button>
-        )
-      }
       return (
         <Button type="primary" status="danger" long size="large" disabled>
           Auction Failed
@@ -197,25 +181,6 @@ export default function Auctions() {
         duration: 0
       })
       await takeAway(index)
-      handle()
-      Message.success('Transaction successful')
-    } catch (error) {
-      console.trace(error)
-      Message.clear()
-      Message.warning('Transaction canceled')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const onDestroy = async (index: number) => {
-    try {
-      setLoading(true)
-      const handle = Message.loading({
-        content: 'Sending transaction...',
-        duration: 0
-      })
-      await destroy(index)
       handle()
       Message.success('Transaction successful')
     } catch (error) {

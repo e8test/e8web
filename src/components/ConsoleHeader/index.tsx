@@ -26,6 +26,9 @@ export default function ConsoleHeader() {
           <Menu.Item key="/console/expires" className={styles.menu_link}>
             <Link to="/console/expires">Expires</Link>
           </Menu.Item>
+          <Menu.Item key="/console/auctions" className={styles.menu_link}>
+            <Link to="/console/auctions">Auctions</Link>
+          </Menu.Item>
         </Menu>
         {account ? (
           <Button type="primary" shape="round" onClick={disconnect}>

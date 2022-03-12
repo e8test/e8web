@@ -13,6 +13,7 @@ import Console from '@/pages/Console'
 import Applies from '@/pages/Applies'
 import Expires from '@/pages/Expires'
 import Auctions from '@/pages/Auctions'
+import AuctionAdmin from '@/pages/AuctionAdmin'
 
 export default function App() {
   const { error } = useWeb3React()
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/console" element={<Console />}>
           <Route path="" element={<Applies />} />
           <Route path="expires" element={<Expires />} />
+          <Route path="auctions" element={<AuctionAdmin />} />
         </Route>
       </Routes>
     </BrowserRouter>
