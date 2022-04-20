@@ -204,16 +204,11 @@ export default function useNFTs() {
     [routerContract, listDeposits, listNFTs]
   )
 
-  useEffect(() => {
-    if (account) {
-      listNFTs()
-    }
-  }, [listNFTs, listDeposits, account])
-
   return {
     nfts,
     deposits,
     depositApproved,
+    listNFTs,
     listDeposits,
     approve,
     add,

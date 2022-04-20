@@ -58,11 +58,19 @@ export default function AuctionAdmin() {
       title: 'Status',
       dataIndex: 'status',
       render: (value, record) => {
-        console.log(record.index)
-        if (value < 200) return <Tag color="#0fc6c2">Ongoing</Tag>
-        if (value === 200 || value === 201) return <Tag color="#00b42a">Successful</Tag>
-        if (value === 300) return <Tag color="#f53f3f">Failed</Tag>
-        if (value === 301) return <Tag color="#f53f3f">Destroyed</Tag>
+        if (value === 1) {
+          if (record.timeout > Date.now()) {
+            return <Tag color="#0fc6c2">Ongoing</Tag>
+          } else {
+            if (record.bidTimes === 0) {
+              return <Tag color="#f53f3f">Failed</Tag>
+            } else {
+              return <Tag color="#00b42a">Successful</Tag>
+            }
+          }
+        }
+        if (value === 2) return <Tag color="#00b42a">Successful</Tag>
+        if (value === 3) return <Tag color="#f53f3f">Destroyed</Tag>
       }
     },
     {
@@ -70,7 +78,11 @@ export default function AuctionAdmin() {
       dataIndex: 'opt',
       width: 250,
       render: (value, record) => {
-        if (record.status === 300) {
+        if (
+          record.status === 1 &&
+          record.bidTimes === 0 &&
+          record.timeout < Date.now()
+        ) {
           return (
             <Space>
               <Button

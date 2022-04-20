@@ -20,13 +20,14 @@ import styles from './style.module.scss'
 import CONFIG from '@/config'
 import ButtonTab from '@/components/ButtonTab'
 import useNFTs from '@/hooks/useNFTs'
-import * as util from '@/libs/util'
 import { useConnect } from '@/libs/wallet/hooks'
+import * as util from '@/libs/util'
 
 export default function Bank() {
   const {
     nfts,
     deposits,
+    listNFTs,
     listDeposits,
     depositApproved,
     approve,
@@ -45,22 +46,6 @@ export default function Bank() {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [priceModalVisible, setPriceModalVisible] = useState(false)
-
-  useEffect(() => {
-    if (!deposits && tab === 1) {
-      listDeposits()
-    }
-  }, [deposits, listDeposits, tab])
-
-  if (!account) {
-    return (
-      <div className="page-empty">
-        <Button size="large" type="primary" shape="round" onClick={connect}>
-          Connect Wallet
-        </Button>
-      </div>
-    )
-  }
 
   const showPriceModal = (nft: INFT) => {
     setCurrent(nft)
@@ -122,7 +107,7 @@ export default function Bank() {
           type="outline"
           className={styles.btn}
           disabled={loading}
-          onClick={() => onDeposit(nft.tokenId)}
+          onClick={() => depositConfirm(nft)}
         >
           #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Pledge
         </Button>
@@ -292,6 +277,29 @@ export default function Bank() {
     }
   }
 
+  const depositConfirm = (item: INFT) => {
+    Modal.confirm({
+      title: 'Pledge #' + item.tokenId,
+      content: (
+        <div>
+          <div className={styles.row}>
+            <span>Pledge Expire:</span>
+            <span>{util.timeFormat(item.depositExpire)}</span>
+          </div>
+          <div className={styles.row}>
+            <span>Redeem Expire:</span>
+            <span>
+              {Number((item.redeemExpire / 3600 / 24 / 1000).toFixed(3))} days
+            </span>
+          </div>
+        </div>
+      ),
+      onOk: async () => {
+        onDeposit(item.tokenId)
+      }
+    })
+  }
+
   const onRedemption = async (tokenId: number) => {
     try {
       setLoading(true)
@@ -325,6 +333,22 @@ export default function Bank() {
     } finally {
       setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    if (!account) return
+    if (tab === 0) listNFTs()
+    if (tab === 1) listDeposits()
+  }, [tab, account, listNFTs, listDeposits])
+
+  if (!account) {
+    return (
+      <div className="page-empty">
+        <Button size="large" type="primary" shape="round" onClick={connect}>
+          Connect Wallet
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -364,6 +388,7 @@ export default function Bank() {
         visible={priceModalVisible}
         onCancel={() => setPriceModalVisible(false)}
         style={{ maxWidth: '90%' }}
+        unmountOnExit
         footer={[
           <Button key="cancel" onClick={() => setPriceModalVisible(false)}>
             Cancel
@@ -393,6 +418,7 @@ export default function Bank() {
         visible={visible}
         onCancel={() => setVisible(false)}
         style={{ maxWidth: '90%' }}
+        unmountOnExit
         footer={[
           <Button key="cancel" onClick={() => setVisible(false)}>
             Cancel

@@ -41,7 +41,6 @@ declare interface IAuction {
   index: number
   bidTimes: number
   lastPrice: number
-  previous: number
   startingPrice: number
   status: number
   timeout: number
@@ -49,5 +48,5 @@ declare interface IAuction {
   tokenId: number
   uri: string
   status: number
-  winner: string
+  lastBidder: string
 }

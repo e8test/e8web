@@ -12,6 +12,7 @@ import useMemoState from './useMemoState'
 
 export default function useAuctions() {
   const [auctions, setAuctions] = useMemoState<IAuction[]>('auctions', [])
+  const [mine, setMine] = useMemoState<IAuction[]>('mine', [])
   const { account, library } = useWeb3React<Web3Provider>()
   const [balance, setBalance] = useMemoState<number>('tokenBalance', 0)
   const [owner, setOwner] = useMemoState<string>('auctionOwner', '')
@@ -52,60 +53,83 @@ export default function useAuctions() {
   }, [auctionContract, setOwner])
 
   const getItem = useCallback(
-    async (index: number) => {
-      const [result, status] = await Promise.all([
-        auctionContract.auctions(index),
-        auctionContract.getAuctionStatus(index)
-      ])
+    async (index: number, account = '') => {
+      let result: any
+      if (account) {
+        result = await auctionContract.participatedAuctionByAddress(
+          account,
+          index
+        )
+      } else {
+        result = await auctionContract.auctionByIndex(index)
+      }
       const uri = await nftContract.tokenURI(result.tokenId)
       const obj: IAuction = {
         index,
         bidTimes: result.bidTimes.toNumber(),
         lastPrice: Number(ethers.utils.formatUnits(result.lastPrice)),
-        previous: result.previous.toNumber(),
+        lastBidder: result.lastBidder,
         startingPrice: Number(ethers.utils.formatUnits(result.startingPrice)),
         timeout: result.timeout.toNumber() * 1000,
         token: result.token,
         tokenId: result.tokenId.toNumber(),
         uri,
-        status: status.status.toNumber(),
-        winner: status.winner
+        status: result.status
       }
       return obj
     },
     [auctionContract, nftContract]
   )
 
-  const list = useCallback(async () => {
+  const listAll = useCallback(async () => {
     const handle = Message.loading({
       content: 'Loading...',
       duration: 0
     })
-    const rows: IAuction[] = []
+    let rows: IAuction[] = []
     let index = await auctionContract.lastAuctionIndex()
     if (index.toNumber() > 0) {
-      let item = await getItem(index.toNumber())
-      rows.push(item)
-      while (item.previous > 0) {
-        item = await getItem(item.previous)
-        rows.push(item)
+      const actions = []
+      for (let i = index.toNumber(); i >= 1; i--) {
+        actions.push(getItem(i))
       }
+      rows = await Promise.all(actions)
     }
-    console.log('=============auctions=============')
-    setAuctions(rows.reverse())
+    console.log('=============all auctions=============')
     console.log(rows)
     handle()
+    setAuctions(rows)
   }, [auctionContract, getItem, setAuctions])
+
+  const listMine = useCallback(async () => {
+    const handle = Message.loading({
+      content: 'Loading...',
+      duration: 0
+    })
+    let rows: IAuction[] = []
+    const count = await auctionContract.auctionCountByAddress(account)
+    if (count.toNumber() > 0) {
+      const actions = []
+      for (let i = count.toNumber(); i >= 1; i--) {
+        actions.push(getItem(i, account))
+      }
+      rows = await Promise.all(actions)
+    }
+    console.log('=============my auctions=============')
+    console.log(rows)
+    handle()
+    setMine(rows)
+  }, [auctionContract, getItem, account])
 
   const bid = useCallback(
     async (index: number, price: number) => {
       const priceValue = ethers.utils.parseEther(price.toString())
       const trans = await auctionContract.bid(index, priceValue)
       await trans.wait(1)
-      list()
+      listAll()
       getUser()
     },
-    [auctionContract, list, getUser]
+    [auctionContract, listAll, getUser]
   )
 
   const approve = useCallback(async () => {
@@ -114,47 +138,49 @@ export default function useAuctions() {
       ethers.constants.MaxUint256
     )
     await trans.wait(1)
-    list()
+    listAll()
     getUser()
-  }, [tokenContract, getUser, list])
+  }, [tokenContract, getUser, listAll])
 
   const takeAway = useCallback(
     async (index: number) => {
       const trans = await auctionContract.takeAwayNFT(index)
       await trans.wait(1)
-      list()
+      listAll()
+      listMine()
       getUser()
     },
-    [auctionContract, getUser, list]
+    [auctionContract, getUser, listAll]
   )
 
   const destroy = useCallback(
     async (index: number) => {
       const trans = await auctionContract.destory(index)
       await trans.wait(1)
-      list()
+      listAll()
       getUser()
     },
-    [auctionContract, getUser, list]
+    [auctionContract, getUser, listAll]
   )
 
   useEffect(() => {
     if (library) {
-      list()
       getUser()
       getOwner()
     }
-  }, [list, getUser, library, getOwner])
+  }, [getUser, library, getOwner])
 
   return {
     auctions,
     balance,
     allowance,
     owner,
+    mine,
     bid,
     approve,
-    list,
+    listAll,
     takeAway,
-    destroy
+    destroy,
+    listMine
   }
 }

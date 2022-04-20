@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Button,
   Empty,
   Modal,
   Form,
+  Divider,
   Message,
   Statistic,
   InputNumber,
@@ -12,88 +13,99 @@ import {
 
 import CONFIG from '@/config'
 import styles from './style.module.scss'
+import ButtonTab from '@/components/ButtonTab'
 import useAuctions from '@/hooks/useAuctions'
 import { useWeb3React } from '@web3-react/core'
 
 export default function Auctions() {
   const formRef = useRef<FormInstance>(null)
+  const [tab, setTab] = useState(0)
   const [visible, setVisible] = useState(false)
   const {
     auctions,
     balance,
     allowance,
+    mine,
     approve,
     bid,
-    list,
-    takeAway
+    listAll,
+    takeAway,
+    listMine
   } = useAuctions()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(-1)
   const [current, setCurrent] = useState<IAuction>()
   const { account } = useWeb3React()
 
   const renderBtn = (nft: IAuction) => {
-    if (nft.status === 300) {
-      return (
-        <Button type="primary" status="danger" long size="large" disabled>
-          Auction Failed
-        </Button>
-      )
-    }
-    if (nft.status === 301) {
-      return (
-        <Button type="primary" status="danger" long size="large" disabled>
-          Destroyed
-        </Button>
-      )
-    }
-    if (nft.status < 200) {
-      return (
-        <Button
-          type="outline"
-          long
-          size="large"
-          onClick={() => onBid(nft)}
-          loading={loading}
-          disabled={nft.timeout < Date.now()}
-        >
-          <span className={styles.countdown}>Bidding countdown:</span>
-          <Statistic.Countdown
-            now={Date.now()}
-            value={nft.timeout}
-            style={{ fontSize: '12px' }}
-            onFinish={list}
-          ></Statistic.Countdown>
-        </Button>
-      )
-    }
-    if (nft.status === 201) {
-      return (
-        <Button type="outline" status="success" long size="large" disabled>
-          Auction Successful
-        </Button>
-      )
-    }
-    if (nft.status === 200) {
-      if (nft.winner === account) {
+    if (nft.status === 1) {
+      if (nft.timeout > Date.now()) {
         return (
           <Button
-            type="primary"
+            type="outline"
+            long
+            size="large"
+            onClick={() => onBid(nft)}
+            loading={loading === nft.tokenId}
+            disabled={nft.timeout < Date.now() || loading >= 0}
+          >
+            <span className={styles.countdown}>Bidding countdown:</span>
+            <Statistic.Countdown
+              now={Date.now()}
+              value={nft.timeout}
+              style={{ fontSize: '12px' }}
+              onFinish={listAll}
+            ></Statistic.Countdown>
+          </Button>
+        )
+      } else if (nft.lastBidder === account) {
+        return (
+          <Button
+            type="outline"
             long
             status="success"
             size="large"
-            onClick={() => onTakeAway(nft.index)}
-            loading={loading}
+            onClick={() => onTakeAway(nft)}
+            loading={loading === nft.tokenId}
+            disabled={loading >= 0}
           >
             Auction Successful, Take Away
+          </Button>
+        )
+      } else if (nft.bidTimes > 0) {
+        return (
+          <Button type="outline" long status="success" size="large" disabled>
+            Auction Finished
+          </Button>
+        )
+      } else {
+        return (
+          <Button type="outline" status="danger" long size="large" disabled>
+            Auction Failed
+          </Button>
+        )
+      }
+    }
+    if (nft.status === 2) {
+      if (nft.lastBidder === account) {
+        return (
+          <Button type="primary" status="success" long size="large" disabled>
+            Taken Away
           </Button>
         )
       } else {
         return (
           <Button type="outline" status="success" long size="large" disabled>
-            Auction Successful
+            Auction Finished
           </Button>
         )
       }
+    }
+    if (nft.status === 3) {
+      return (
+        <Button type="primary" status="danger" long size="large" disabled>
+          Auction Failed
+        </Button>
+      )
     }
   }
 
@@ -103,6 +115,12 @@ export default function Auctions() {
         <div className={styles.row}>
           <span>Token ID</span>
           <span>{nft.tokenId}</span>
+        </div>
+        <div className={styles.row}>
+          <span>Bid Times</span>
+          <span>
+            {nft.bidTimes}
+          </span>
         </div>
         <div className={styles.row}>
           <span>Starting Price</span>
@@ -122,7 +140,8 @@ export default function Auctions() {
   }
 
   const renderNFTS = () => {
-    if (!auctions.length) {
+    const rows = tab === 0 ? auctions : mine
+    if (!rows.length) {
       return (
         <div className="page-empty">
           <Empty />
@@ -131,7 +150,7 @@ export default function Auctions() {
     }
     return (
       <div className={styles.nfts}>
-        {auctions.map(item => (
+        {rows.map(item => (
           <div key={item.tokenId} className={styles.nft}>
             <div className={styles.imgbox}>
               <img src={item.uri} alt="" className={styles.img} />
@@ -156,7 +175,7 @@ export default function Auctions() {
     }
     try {
       setVisible(false)
-      setLoading(true)
+      setLoading(current!.tokenId)
       const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
@@ -169,18 +188,18 @@ export default function Auctions() {
       Message.clear()
       Message.warning('Transaction canceled')
     } finally {
-      setLoading(false)
+      setLoading(-1)
     }
   }
 
-  const onTakeAway = async (index: number) => {
+  const onTakeAway = async (nft: IAuction) => {
     try {
-      setLoading(true)
+      setLoading(nft.tokenId)
       const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
-      await takeAway(index)
+      await takeAway(nft.index)
       handle()
       Message.success('Transaction successful')
     } catch (error) {
@@ -188,12 +207,24 @@ export default function Auctions() {
       Message.clear()
       Message.warning('Transaction canceled')
     } finally {
-      setLoading(false)
+      setLoading(-1)
     }
   }
 
+  useEffect(() => {
+    if (!account) return
+    if (tab === 0) listAll()
+    if (tab === 1) listMine()
+  }, [tab, account])
+
   return (
     <div className="page-main">
+      <ButtonTab
+        value={tab}
+        onChange={value => setTab(value)}
+        tabs={['All auctions', 'My auctions']}
+      />
+      <Divider />
       {renderNFTS()}
       <Modal
         title={'Balance: ' + balance.toFixed(0) + ' ' + CONFIG.tokenName}
@@ -205,7 +236,7 @@ export default function Auctions() {
           <Button
             key="cancel"
             onClick={() => setVisible(false)}
-            disabled={loading}
+            disabled={loading >= 0}
           >
             Cancel
           </Button>,
@@ -213,7 +244,7 @@ export default function Auctions() {
             key="submit"
             type="primary"
             onClick={onSubmit}
-            loading={loading}
+            loading={loading >= 0}
           >
             Bid
           </Button>
