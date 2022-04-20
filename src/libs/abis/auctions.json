@@ -38,17 +38,127 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "auctionByIndex",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "startingPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bidTimes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "lastBidder",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timeout",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
-    "name": "bids",
+    "name": "auctionByToken",
     "outputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "startingPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bidTimes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "lastBidder",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timeout",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "address",
         "name": "bidder",
@@ -56,12 +166,107 @@
       },
       {
         "internalType": "uint256",
-        "name": "price",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "bidByAddressAndIndex",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "_bidder",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "timestamp",
+        "name": "_price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_timestamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "bidByAuctionAndIndex",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "_bidder",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_timestamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "bidder",
+        "type": "address"
+      }
+    ],
+    "name": "bidCountByAddress",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "bidCountByAuction",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "count",
         "type": "uint256"
       }
     ],
@@ -96,7 +301,7 @@
   },
   {
     "inputs": [],
-    "name": "firstAuctionIndex",
+    "name": "lastAuctionIndex",
     "outputs": [
       {
         "internalType": "uint256",
@@ -108,12 +313,33 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "lastAuctionIndex",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "lastBidOfAuction",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "_bidder",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_timestamp",
         "type": "uint256"
       }
     ],
@@ -128,6 +354,30 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "bidder",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "participated",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -187,94 +437,6 @@
     "name": "start",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
-    ],
-    "name": "auctions",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "startingPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "bidTimes",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lastPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timeout",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "status",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "previous",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "next",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
-    ],
-    "name": "getAuctionStatus",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "status",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "winner",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
