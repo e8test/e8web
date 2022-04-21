@@ -372,7 +372,7 @@ export default function Bank() {
           <ButtonTab
             value={tab}
             onChange={value => setTab(value)}
-            tabs={['NFTs', 'Pledge']}
+            tabs={['My NFTs', 'Pledge']}
           />
           {tab === 0 && (
             <Button
