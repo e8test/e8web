@@ -10,6 +10,7 @@ import {
   InputNumber,
   FormInstance
 } from '@arco-design/web-react'
+import { IconRefresh } from '@arco-design/web-react/icon'
 
 import CONFIG from '@/config'
 import styles from './style.module.scss'
@@ -118,9 +119,7 @@ export default function Auctions() {
         </div>
         <div className={styles.row}>
           <span>Bid Times</span>
-          <span>
-            {nft.bidTimes}
-          </span>
+          <span>{nft.bidTimes}</span>
         </div>
         <div className={styles.row}>
           <span>Starting Price</span>
@@ -211,6 +210,11 @@ export default function Auctions() {
     }
   }
 
+  const refresh = () => {
+    if (tab === 0) listAll()
+    else listMine()
+  }
+
   useEffect(() => {
     if (!account) return
     if (tab === 0) listAll()
@@ -219,11 +223,19 @@ export default function Auctions() {
 
   return (
     <div className="page-main">
-      <ButtonTab
-        value={tab}
-        onChange={value => setTab(value)}
-        tabs={['All auctions', 'My auctions']}
-      />
+      <div className="toolbar">
+        <ButtonTab
+          value={tab}
+          onChange={value => setTab(value)}
+          tabs={['All auctions', 'My auctions']}
+        />
+        <Button
+          type="primary"
+          icon={<IconRefresh />}
+          size="large"
+          onClick={refresh}
+        />
+      </div>
       <Divider />
       {renderNFTS()}
       <Modal

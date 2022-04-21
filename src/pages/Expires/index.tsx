@@ -9,6 +9,7 @@ import {
   Link
 } from '@arco-design/web-react'
 import { ColumnProps } from '@arco-design/web-react/lib/Table'
+import { IconRefresh } from '@arco-design/web-react/icon'
 
 import styles from '../Applies/style.module.scss'
 import CONFIG from '@/config'
@@ -17,7 +18,7 @@ import * as util from '@/libs/util'
 
 export default function Expires() {
   const [loading, setLoading] = useState(false)
-  const { expires, redemption } = useExpires()
+  const { expires, redemption, listExpires } = useExpires()
 
   const columns: ColumnProps<INFT>[] = [
     {
@@ -57,7 +58,7 @@ export default function Expires() {
     {
       title: 'Operation',
       dataIndex: 'opt',
-      width: 200,
+      width: 250,
       render: (value, record) => {
         return (
           <Space>
@@ -66,7 +67,7 @@ export default function Expires() {
               onClick={() => onRedemption(record.tokenId)}
               disabled={loading}
             >
-              Redeem
+              Redeem & Auction
             </Button>
           </Space>
         )
@@ -94,10 +95,18 @@ export default function Expires() {
 
   return (
     <div className="page-main">
-      <Breadcrumb className={styles.toolbar}>
-        <Breadcrumb.Item>Console</Breadcrumb.Item>
-        <Breadcrumb.Item>Expires</Breadcrumb.Item>
-      </Breadcrumb>
+      <div className="toolbar">
+        <Breadcrumb className={styles.toolbar}>
+          <Breadcrumb.Item>Console</Breadcrumb.Item>
+          <Breadcrumb.Item>Expires</Breadcrumb.Item>
+        </Breadcrumb>
+        <Button
+          type="primary"
+          icon={<IconRefresh />}
+          size="large"
+          onClick={listExpires}
+        />
+      </div>
       <Table columns={columns} data={expires} rowKey="tokenId" />
     </div>
   )

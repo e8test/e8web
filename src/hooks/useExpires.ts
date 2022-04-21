@@ -114,6 +114,7 @@ export default function useExpires() {
 
   return {
     expires,
-    redemption
+    redemption,
+    listExpires
   }
 }

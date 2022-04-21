@@ -98,6 +98,7 @@ export default function useApplies() {
 
   return {
     applies,
-    setPrice
+    setPrice,
+    listApplies
   }
 }

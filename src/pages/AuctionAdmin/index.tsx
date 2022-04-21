@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Button,
   Space,
@@ -9,14 +9,17 @@ import {
   Statistic
 } from '@arco-design/web-react'
 import { ColumnProps } from '@arco-design/web-react/lib/Table'
+import { IconRefresh } from '@arco-design/web-react/icon'
 
 import styles from '../Applies/style.module.scss'
 import CONFIG from '@/config'
 import useAuctions from '@/hooks/useAuctions'
+import { useWeb3React } from '@web3-react/core'
 
 export default function AuctionAdmin() {
   const [loading, setLoading] = useState(false)
-  const { auctions, destroy } = useAuctions()
+  const { auctions, destroy, listAll } = useAuctions()
+  const { account } = useWeb3React()
 
   const columns: ColumnProps<IAuction>[] = [
     {
@@ -124,12 +127,24 @@ export default function AuctionAdmin() {
     }
   }
 
+  useEffect(() => {
+    if (account) listAll()
+  }, [account])
+
   return (
     <div className="page-main">
-      <Breadcrumb className={styles.toolbar}>
-        <Breadcrumb.Item>Console</Breadcrumb.Item>
-        <Breadcrumb.Item>Auctions</Breadcrumb.Item>
-      </Breadcrumb>
+      <div className="toolbar">
+        <Breadcrumb className={styles.toolbar}>
+          <Breadcrumb.Item>Console</Breadcrumb.Item>
+          <Breadcrumb.Item>Auctions</Breadcrumb.Item>
+        </Breadcrumb>
+        <Button
+          type="primary"
+          icon={<IconRefresh />}
+          size="large"
+          onClick={listAll}
+        />
+      </div>
       <Table columns={columns} data={auctions} rowKey="index" />
     </div>
   )
