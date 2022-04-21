@@ -12,7 +12,7 @@ import {
   InputNumber,
   FormInstance
 } from '@arco-design/web-react'
-import { IconImage } from '@arco-design/web-react/icon'
+import { IconImage, IconRefresh } from '@arco-design/web-react/icon'
 import { useWeb3React } from '@web3-react/core'
 import classNames from 'classnames'
 
@@ -119,20 +119,20 @@ export default function Bank() {
   }
 
   const renderDepositBtn = (nft: INFT) => {
+    if (nft.redeemExpire + nft.timestamp < Date.now()) {
+      return (
+        <Button
+          className={styles.btn}
+          status="danger"
+          size="large"
+          long
+          disabled
+        >
+          #{nft.tokenId}, Redemption Timeout
+        </Button>
+      )
+    }
     if (depositApproved) {
-      if (nft.redeemExpire + nft.timestamp < Date.now()) {
-        return (
-          <Button
-            className={styles.btn}
-            status="danger"
-            size="large"
-            long
-            disabled
-          >
-            #{nft.tokenId}, Redemption Timeout
-          </Button>
-        )
-      }
       return (
         <Button
           long
@@ -335,6 +335,11 @@ export default function Bank() {
     }
   }
 
+  const refresh = () => {
+    if (tab === 0) listNFTs()
+    else listDeposits()
+  }
+
   useEffect(() => {
     if (!account) return
     if (tab === 0) listNFTs()
@@ -362,24 +367,32 @@ export default function Bank() {
           })
         }}
       />
-      <Space>
-        <ButtonTab
-          value={tab}
-          onChange={value => setTab(value)}
-          tabs={['NFTs', 'Pledge']}
+      <div className="toolbar">
+        <Space>
+          <ButtonTab
+            value={tab}
+            onChange={value => setTab(value)}
+            tabs={['NFTs', 'Pledge']}
+          />
+          {tab === 0 && (
+            <Button
+              type="primary"
+              size="large"
+              icon={<IconImage />}
+              disabled={loading}
+              onClick={() => setVisible(true)}
+            >
+              Import NFT
+            </Button>
+          )}
+        </Space>
+        <Button
+          type="primary"
+          icon={<IconRefresh />}
+          size="large"
+          onClick={refresh}
         />
-        {tab === 0 && (
-          <Button
-            type="primary"
-            size="large"
-            icon={<IconImage />}
-            disabled={loading}
-            onClick={() => setVisible(true)}
-          >
-            Import NFT
-          </Button>
-        )}
-      </Space>
+      </div>
       <Divider />
       {renderNFTS()}
       {renderDeposits()}

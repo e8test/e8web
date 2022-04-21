@@ -61,3 +61,13 @@ body {
 .arco-modal {
   max-width: 90%;
 }
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+@media screen and (max-width: 768px) {
+  .arco-btn-size-large {
+    padding: 0 15px;
+  }
+}

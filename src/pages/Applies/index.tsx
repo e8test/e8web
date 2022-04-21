@@ -13,6 +13,7 @@ import {
   Tooltip,
   Link
 } from '@arco-design/web-react'
+import { IconRefresh } from '@arco-design/web-react/icon'
 import { ColumnProps } from '@arco-design/web-react/lib/Table'
 import dayjs from 'dayjs'
 
@@ -26,7 +27,7 @@ export default function Applies() {
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const [current, setCurrent] = useState<IApply>()
-  const { applies, setPrice } = useApplies()
+  const { applies, setPrice, listApplies } = useApplies()
 
   const columns: ColumnProps<IApply>[] = [
     {
@@ -146,10 +147,18 @@ export default function Applies() {
 
   return (
     <div className="page-main">
-      <Breadcrumb className={styles.toolbar}>
-        <Breadcrumb.Item>Console</Breadcrumb.Item>
-        <Breadcrumb.Item>Application</Breadcrumb.Item>
-      </Breadcrumb>
+      <div className="toolbar">
+        <Breadcrumb className={styles.toolbar}>
+          <Breadcrumb.Item>Console</Breadcrumb.Item>
+          <Breadcrumb.Item>Application</Breadcrumb.Item>
+        </Breadcrumb>
+        <Button
+          type="primary"
+          icon={<IconRefresh />}
+          size="large"
+          onClick={listApplies}
+        />
+      </div>
       <Table columns={columns} data={applies} rowKey="tokenId" />
       <Modal
         title={'Quote - #' + current?.tokenId}
@@ -166,11 +175,16 @@ export default function Applies() {
           </Button>
         ]}
       >
-        <Form ref={formRef} layout="vertical" size="large" initialValues={{
-          price: current?.quote,
-          depositExpire: dayjs().add(7, 'day').format('YYYY-MM-DD HH:mm:ss'),
-          redeemExpire: 60
-        }}>
+        <Form
+          ref={formRef}
+          layout="vertical"
+          size="large"
+          initialValues={{
+            price: current?.quote,
+            depositExpire: dayjs().add(7, 'day').format('YYYY-MM-DD HH:mm:ss'),
+            redeemExpire: 60
+          }}
+        >
           <Form.Item
             label="Price"
             field="price"
