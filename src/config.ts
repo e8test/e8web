@@ -7,7 +7,7 @@ const CONFIGS: IConfig = {
       tokenName: 'E8INDEX',
       nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
       routerAddr: '0x34218aEc421b5d882158684d5b92F328219c9FB9',
-      auctions: '0x8DC918a0b0e187e4b71AcCeE1432B37D5559254B',
+      auctions: '0xd715c18d6595535d874aa477e3D41b38B67f1d85',
       tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',
       logAddr: '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
     }
