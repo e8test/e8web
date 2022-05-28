@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { ethers } from 'ethers'
 
-import CONFIG from '@/config'
+import { currentRouter } from '@/config'
 import ROUTERABI from '@/libs/abis/router.json'
 import { useProvider } from '@/libs/wallet/hooks'
 import useMemoState from './useMemoState'
@@ -11,7 +11,7 @@ export default function useAdmin() {
   const [admin, setAdmin] = useMemoState('admin', '')
 
   const routerContract = useMemo(() => {
-    return new ethers.Contract(CONFIG.routerAddr, ROUTERABI, provider)
+    return new ethers.Contract(currentRouter, ROUTERABI, provider)
   }, [provider])
 
   const getAdmin = useCallback(async () => {

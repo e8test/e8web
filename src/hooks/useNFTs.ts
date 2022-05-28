@@ -1,10 +1,10 @@
-import { useMemo, useCallback, useEffect } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import { Message } from '@arco-design/web-react'
 import { BigNumber, ethers } from 'ethers'
 
-import CONFIG from '@/config'
+import CONFIG, { currentRouter } from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
 import ERC20ABI from '@/libs/abis/erc20.json'
 import ROUTERABI from '@/libs/abis/router.json'
@@ -24,11 +24,7 @@ export default function useNFTs() {
   }, [library])
 
   const routerContract = useMemo(() => {
-    return new ethers.Contract(
-      CONFIG.routerAddr,
-      ROUTERABI,
-      library?.getSigner()
-    )
+    return new ethers.Contract(currentRouter, ROUTERABI, library?.getSigner())
   }, [library])
 
   const tokenContract = useMemo(() => {
@@ -44,7 +40,7 @@ export default function useNFTs() {
         routerContract.getNFTStatus(CONFIG.nftAddr, tokenId)
       ])
       const uri = result[0]
-      const isApproved = result[1] === CONFIG.routerAddr
+      const isApproved = result[1] === currentRouter
       const [quote, value, depositExpire, redeemExpire, lastApply] = result[2]
       const depositExpireTime = depositExpire.toNumber() * 1000
       const redeemExpireTime = redeemExpire.toNumber() * 1000
@@ -68,10 +64,7 @@ export default function useNFTs() {
 
   const getDepositIndex = useCallback(
     async (tokenId: number) => {
-      const status = await routerContract.getNFTStatus(
-        CONFIG.nftAddr,
-        tokenId
-      )
+      const status = await routerContract.getNFTStatus(CONFIG.nftAddr, tokenId)
       let index = await routerContract.findDepositPosition(status[3])
       return index
     },
@@ -109,14 +102,18 @@ export default function useNFTs() {
     })
     const [count, allowance] = await Promise.all([
       routerContract.getDepositedCount(account),
-      tokenContract.allowance(account, CONFIG.routerAddr)
+      tokenContract.allowance(account, currentRouter)
     ])
     const indexActions = []
     for (let i = 0; i < count.toNumber(); i++) {
-      indexActions.push(routerContract.getDepositedNFTIndexByPositionOfOwner(account, i))
+      indexActions.push(
+        routerContract.getDepositedNFTIndexByPositionOfOwner(account, i)
+      )
     }
     const indexResult = await Promise.all(indexActions)
-    const idActions = indexResult.map(index => routerContract.getDepositedNFTByIndex(index))
+    const idActions = indexResult.map(index =>
+      routerContract.getDepositedNFTByIndex(index)
+    )
     const idResult = await Promise.all(idActions)
     const ids = idResult.map(item => item.tokenId)
     const infoActions = []
@@ -124,10 +121,12 @@ export default function useNFTs() {
       infoActions.push(getNFT(id))
     }
     let rows = await Promise.all(infoActions)
-    rows = rows.map((row, index) => ({
-      ...row,
-      timestamp: idResult[index].timestamp.toNumber() * 1000
-    })).reverse()
+    rows = rows
+      .map((row, index) => ({
+        ...row,
+        timestamp: idResult[index].timestamp.toNumber() * 1000
+      }))
+      .reverse()
     setDepositApproved(allowance.gt(0))
     setDeposits(rows)
     console.log('=============deposits=============')
@@ -145,7 +144,7 @@ export default function useNFTs() {
 
   const approve = useCallback(
     async (tokenId: number) => {
-      const trans = await nftContract.approve(CONFIG.routerAddr, tokenId)
+      const trans = await nftContract.approve(currentRouter, tokenId)
       await trans.wait(1)
     },
     [nftContract]
@@ -187,7 +186,7 @@ export default function useNFTs() {
 
   const approveRedemption = useCallback(async () => {
     const trans = await tokenContract.approve(
-      CONFIG.routerAddr,
+      currentRouter,
       ethers.constants.MaxUint256
     )
     await trans.wait(1)

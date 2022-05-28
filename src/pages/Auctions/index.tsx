@@ -101,7 +101,7 @@ export default function Auctions() {
         )
       }
     }
-    if (nft.status === 3) {
+    if (nft.status === 3 || nft.status === 4) {
       return (
         <Button type="primary" status="danger" long size="large" disabled>
           Auction Failed
@@ -162,6 +162,7 @@ export default function Auctions() {
   }
 
   const onBid = async (item: IAuction) => {
+    if (item.timeout < Date.now()) return
     setCurrent(item)
     setVisible(true)
     formRef.current?.setFieldValue('price', item.lastPrice)
@@ -219,7 +220,7 @@ export default function Auctions() {
     if (!account) return
     if (tab === 0) listAll()
     if (tab === 1) listMine()
-  }, [tab, account])
+  }, [tab, account, listAll, listMine])
 
   return (
     <div className="page-main">

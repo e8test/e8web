@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 
 import { useProvider } from '@/libs/wallet/hooks'
 import ERC20ABI from '@/libs/abis/erc20.json'
-import CONFIG from '@/config'
+import CONFIG, { currentRouter } from '@/config'
 import useMemoState from './useMemoState'
 
 export default function useCharts() {
@@ -16,7 +16,7 @@ export default function useCharts() {
   }, [provider])
 
   const getTokenInfo = useCallback(async () => {
-    const reserve = await tokenContract.balanceOf(CONFIG.routerAddr)
+    const reserve = await tokenContract.balanceOf(currentRouter)
     const totalSupply = await tokenContract.totalSupply()
     setTokenInfo({
       reserve: Number(ethers.utils.formatUnits(reserve)),
@@ -27,7 +27,7 @@ export default function useCharts() {
   const marketValue = useCallback(async () => {
     const blockNumber = await provider.getBlockNumber()
     const logs = await provider.getLogs({
-      address: CONFIG.routerAddr,
+      address: currentRouter,
       fromBlock: blockNumber - 4900,
       topics: [CONFIG.logAddr]
     })

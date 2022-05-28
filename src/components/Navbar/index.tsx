@@ -1,9 +1,10 @@
-import { Menu, Button, Dropdown } from '@arco-design/web-react'
+import { Menu, Button, Dropdown, Space } from '@arco-design/web-react'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { IconMenu } from '@arco-design/web-react/icon'
 
 import styles from './style.module.scss'
+import LevelSwitch from '@/components/LevelSwitch'
 import { useConnect } from '@/libs/wallet/hooks'
 
 export default function Navbar() {
@@ -34,19 +35,19 @@ export default function Navbar() {
           <Menu.Item key="/roadmap" className={styles.menu_link}>
             <Link to="/roadmap">Roadmap</Link>
           </Menu.Item>
-          <Menu.Item key="/dashboard" className={styles.menu_link}>
-            <Link to="/dashboard">Dashboard</Link>
-          </Menu.Item>
         </Menu>
-        {account ? (
-          <Button type="primary" shape="round" onClick={disconnect}>
-            {account.slice(0, 5) + '...' + account.slice(-3)}
-          </Button>
-        ) : (
-          <Button type="primary" shape="round" onClick={connect}>
-            Connect
-          </Button>
-        )}
+        <Space>
+          {account ? (
+            <Button type="primary" shape="round" onClick={disconnect}>
+              {account.slice(0, 5) + '...' + account.slice(-3)}
+            </Button>
+          ) : (
+            <Button type="primary" shape="round" onClick={connect}>
+              Connect
+            </Button>
+          )}
+          <LevelSwitch />
+        </Space>
         <Dropdown
           droplist={
             <Menu onClickMenuItem={key => navigate(key)}>

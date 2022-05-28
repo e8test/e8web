@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 import { Message } from '@arco-design/web-react'
 
-import CONFIG from '@/config'
+import CONFIG, { currentAuction } from '@/config'
 import ERC20ABI from '@/libs/abis/erc20.json'
 import NFTABI from '@/libs/abis/nft.json'
 import AUCTIONABI from '../libs/abis/auctions.json'
@@ -23,11 +23,7 @@ export default function useAuctions() {
   }, [library])
 
   const auctionContract = useMemo(() => {
-    return new ethers.Contract(
-      CONFIG.auctions,
-      AUCTIONABI,
-      library?.getSigner()
-    )
+    return new ethers.Contract(currentAuction, AUCTIONABI, library?.getSigner())
   }, [library])
 
   const tokenContract = useMemo(() => {
@@ -38,7 +34,7 @@ export default function useAuctions() {
     if (account) {
       const [balance, allowance] = await Promise.all([
         tokenContract.balanceOf(account),
-        tokenContract.allowance(account, CONFIG.auctions)
+        tokenContract.allowance(account, currentAuction)
       ])
       setBalance(Number(ethers.utils.formatUnits(balance)))
       setAllowance(Number(ethers.utils.formatUnits(allowance)))
@@ -119,7 +115,7 @@ export default function useAuctions() {
     console.log(rows)
     handle()
     setMine(rows)
-  }, [auctionContract, getItem, account])
+  }, [auctionContract, getItem, account, setMine])
 
   const bid = useCallback(
     async (index: number, price: number) => {
@@ -134,7 +130,7 @@ export default function useAuctions() {
 
   const approve = useCallback(async () => {
     const trans = await tokenContract.approve(
-      CONFIG.auctions,
+      currentAuction,
       ethers.constants.MaxUint256
     )
     await trans.wait(1)
@@ -150,12 +146,22 @@ export default function useAuctions() {
       listMine()
       getUser()
     },
-    [auctionContract, getUser, listAll]
+    [auctionContract, getUser, listAll, listMine]
   )
 
   const destroy = useCallback(
     async (index: number) => {
       const trans = await auctionContract.destory(index)
+      await trans.wait(1)
+      listAll()
+      getUser()
+    },
+    [auctionContract, getUser, listAll]
+  )
+
+  const downgrade = useCallback(
+    async (index: number) => {
+      const trans = await auctionContract.downgrade(index)
       await trans.wait(1)
       listAll()
       getUser()
@@ -181,6 +187,7 @@ export default function useAuctions() {
     listAll,
     takeAway,
     destroy,
+    downgrade,
     listMine
   }
 }

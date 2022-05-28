@@ -12,13 +12,13 @@ import { ColumnProps } from '@arco-design/web-react/lib/Table'
 import { IconRefresh } from '@arco-design/web-react/icon'
 
 import styles from '../Applies/style.module.scss'
-import CONFIG from '@/config'
+import CONFIG, { level } from '@/config'
 import useAuctions from '@/hooks/useAuctions'
 import { useWeb3React } from '@web3-react/core'
 
 export default function AuctionAdmin() {
   const [loading, setLoading] = useState(false)
-  const { auctions, destroy, listAll } = useAuctions()
+  const { auctions, destroy, downgrade, listAll } = useAuctions()
   const { account } = useWeb3React()
 
   const columns: ColumnProps<IAuction>[] = [
@@ -74,6 +74,7 @@ export default function AuctionAdmin() {
         }
         if (value === 2) return <Tag color="#00b42a">Successful</Tag>
         if (value === 3) return <Tag color="#f53f3f">Destroyed</Tag>
+        if (value === 4) return <Tag color="#f53f3f">Downgraded</Tag>
       }
     },
     {
@@ -97,9 +98,16 @@ export default function AuctionAdmin() {
               >
                 Destroy
               </Button>
-              <Button type="primary" disabled={loading} size="small">
-                Downgrade
-              </Button>
+              {level > 1 && (
+                <Button
+                  type="primary"
+                  disabled={loading}
+                  size="small"
+                  onClick={() => onDowngrade(record.index)}
+                >
+                  Downgrade
+                </Button>
+              )}
             </Space>
           )
         }
@@ -127,9 +135,28 @@ export default function AuctionAdmin() {
     }
   }
 
+  const onDowngrade = async (index: number) => {
+    try {
+      setLoading(true)
+      const handle = Message.loading({
+        content: 'Sending transaction...',
+        duration: 0
+      })
+      await downgrade(index)
+      handle()
+      Message.success('Transaction successful')
+    } catch (error) {
+      console.trace(error)
+      Message.clear()
+      Message.warning('Transaction canceled')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (account) listAll()
-  }, [account])
+  }, [account, listAll])
 
   return (
     <div className="page-main">

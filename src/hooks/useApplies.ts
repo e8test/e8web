@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { Message } from '@arco-design/web-react'
 import { ethers } from 'ethers'
 
-import CONFIG from '@/config'
+import CONFIG, { currentRouter } from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
 import ROUTERABI from '@/libs/abis/router.json'
 import useMemoState from './useMemoState'
@@ -19,7 +19,7 @@ export default function useApplies() {
 
   const routerContract = useMemo(() => {
     return new ethers.Contract(
-      CONFIG.routerAddr,
+      currentRouter,
       ROUTERABI,
       library?.getSigner()
     )
@@ -37,8 +37,6 @@ export default function useApplies() {
   )
 
   const listApplies = useCallback(async () => {
-    const auctions = await routerContract.auctions()
-    console.log('auctions', auctions)
     const handle = Message.loading({
       content: 'Loading...',
       duration: 0
@@ -94,7 +92,7 @@ export default function useApplies() {
     if (account) {
       listApplies()
     }
-  }, [listApplies, account])
+  }, [listApplies, account, routerContract])
 
   return {
     applies,

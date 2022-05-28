@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { ethers, BigNumber } from 'ethers'
 import { Message } from '@arco-design/web-react'
 
-import CONFIG from '@/config'
+import CONFIG, { currentRouter } from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
 import ROUTERABI from '@/libs/abis/router.json'
 import useMemoState from './useMemoState'
@@ -18,11 +18,7 @@ export default function useExpires() {
   }, [library])
 
   const routerContract = useMemo(() => {
-    return new ethers.Contract(
-      CONFIG.routerAddr,
-      ROUTERABI,
-      library?.getSigner()
-    )
+    return new ethers.Contract(currentRouter, ROUTERABI, library?.getSigner())
   }, [library])
 
   // 获取单个NFT信息
@@ -34,7 +30,7 @@ export default function useExpires() {
         routerContract.getNFTStatus(CONFIG.nftAddr, tokenId)
       ])
       const uri = result[0]
-      const isApproved = result[1] === CONFIG.routerAddr
+      const isApproved = result[1] === currentRouter
       const [quote, value, depositExpire, redeemExpire, lastApply] = result[2]
       const depositExpireTime = depositExpire.toNumber() * 1000
       const redeemExpireTime = redeemExpire.toNumber() * 1000

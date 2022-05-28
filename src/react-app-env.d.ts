@@ -8,8 +8,8 @@ declare interface IConfig {
       ethscan: string
       tokenName: string
       nftAddr: string
-      auctions: string
-      routerAddr: string
+      auctions: string[]
+      pools: string[]
       tokenAddr: string
       logAddr: string
     }
@@ -33,6 +33,12 @@ declare interface IApply {
   tokenId: number
   quote: number
   timestamp: number
+  token: string
+  uri: string
+}
+
+declare interface IDowngrade {
+  tokenId: number
   token: string
   uri: string
 }
