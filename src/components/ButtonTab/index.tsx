@@ -1,5 +1,7 @@
 import { Button } from '@arco-design/web-react'
 
+import { isMobile } from '@/config'
+
 interface Props {
   value: number
   onChange: (value: number) => void
@@ -15,7 +17,7 @@ export default function ButtonTab(props: Props) {
           key={index}
           type={value === index ? 'primary' : 'outline'}
           onClick={() => props.onChange(index)}
-          size="large"
+          size={isMobile ? 'small' : 'default'}
         >
           {item}
         </Button>

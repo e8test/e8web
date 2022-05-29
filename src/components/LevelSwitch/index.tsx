@@ -1,11 +1,9 @@
 import { Menu, Button, Dropdown } from '@arco-design/web-react'
 
-import { level } from '@/config'
+import { level, isMobile } from '@/config'
 
 export default function LevelSwitch() {
   const levelName = () => {
-    const isMobile = window.outerWidth <= 768
-
     switch (level) {
       case 3:
         return isMobile ? '#3' : '#3 Adverse Pool'
@@ -35,7 +33,12 @@ export default function LevelSwitch() {
       trigger="click"
       position="br"
     >
-      <Button shape="round" type="primary" status="success">
+      <Button
+        size={isMobile ? 'small' : 'default'}
+        shape="round"
+        type="primary"
+        status="success"
+      >
         {levelName()}
       </Button>
     </Dropdown>

@@ -65,6 +65,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  button {
+    padding: 0 10px;
+  }
 }
 @media screen and (max-width: 768px) {
   .arco-btn-size-large {

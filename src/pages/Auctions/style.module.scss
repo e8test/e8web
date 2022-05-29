@@ -53,3 +53,8 @@
 .countdown {
   margin-right: 15px;
 }
+@media screen and (max-width: 768px) {
+  .nfts {
+    gap: 30px;
+  }
+}

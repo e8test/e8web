@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import { IconMenu } from '@arco-design/web-react/icon'
 
 import styles from './style.module.scss'
+import { isMobile } from '@/config'
 import LevelSwitch from '@/components/LevelSwitch'
 import { useConnect } from '@/libs/wallet/hooks'
 
@@ -12,6 +13,14 @@ export default function Navbar() {
   const { connect, disconnect } = useConnect()
   const { pathname } = useLocation()
   const { account } = useWeb3React()
+
+  const accountStr = () => {
+    if (!account) return ''
+    if (isMobile) {
+      return account.slice(0, 3) + '..' + account.slice(-2)
+    }
+    return account.slice(0, 5) + '...' + account.slice(-3)
+  }
 
   return (
     <header className={styles.navbar}>
@@ -38,8 +47,13 @@ export default function Navbar() {
         </Menu>
         <Space>
           {account ? (
-            <Button type="primary" shape="round" onClick={disconnect}>
-              {account.slice(0, 5) + '...' + account.slice(-3)}
+            <Button
+              size={isMobile ? 'small' : 'default'}
+              type="primary"
+              shape="round"
+              onClick={disconnect}
+            >
+              {accountStr()}
             </Button>
           ) : (
             <Button type="primary" shape="round" onClick={connect}>
@@ -55,13 +69,16 @@ export default function Navbar() {
               <Menu.Item key="/bank">Bank</Menu.Item>
               <Menu.Item key="/market">Market</Menu.Item>
               <Menu.Item key="/roadmap">Roadmap</Menu.Item>
-              <Menu.Item key="/dashboard">Dashboard</Menu.Item>
             </Menu>
           }
           trigger="click"
           position="br"
         >
-          <Button icon={<IconMenu />} className={styles.menu_btn} />
+          <Button
+            size={isMobile ? 'small' : 'default'}
+            icon={<IconMenu />}
+            className={styles.menu_btn}
+          />
         </Dropdown>
       </div>
     </header>

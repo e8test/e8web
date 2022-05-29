@@ -34,6 +34,7 @@ for (const key in CONFIGS.networks) {
 }
 const CHAIN_IDS = Object.keys(CONFIGS.networks).map(key => Number(key))
 export { CHAIN_IDS, URLS, CONFIGS }
+export const isMobile = window.outerWidth <= 768
 export const level = sessionStorage.getItem('level')
   ? Number(sessionStorage.getItem('level'))
   : 3

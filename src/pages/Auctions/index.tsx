@@ -12,7 +12,7 @@ import {
 } from '@arco-design/web-react'
 import { IconRefresh } from '@arco-design/web-react/icon'
 
-import CONFIG from '@/config'
+import CONFIG, { isMobile } from '@/config'
 import styles from './style.module.scss'
 import ButtonTab from '@/components/ButtonTab'
 import useAuctions from '@/hooks/useAuctions'
@@ -233,7 +233,7 @@ export default function Auctions() {
         <Button
           type="primary"
           icon={<IconRefresh />}
-          size="large"
+          size={isMobile ? 'small' : 'default'}
           onClick={refresh}
         />
       </div>

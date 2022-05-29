@@ -17,7 +17,7 @@ import { useWeb3React } from '@web3-react/core'
 import classNames from 'classnames'
 
 import styles from './style.module.scss'
-import CONFIG from '@/config'
+import CONFIG, { isMobile } from '@/config'
 import ButtonTab from '@/components/ButtonTab'
 import useNFTs from '@/hooks/useNFTs'
 import { useConnect } from '@/libs/wallet/hooks'
@@ -377,7 +377,7 @@ export default function Bank() {
           {tab === 0 && (
             <Button
               type="primary"
-              size="large"
+              size={isMobile ? 'small' : 'default'}
               icon={<IconImage />}
               disabled={loading}
               onClick={() => setVisible(true)}
@@ -389,7 +389,7 @@ export default function Bank() {
         <Button
           type="primary"
           icon={<IconRefresh />}
-          size="large"
+          size={isMobile ? 'small' : 'default'}
           onClick={refresh}
         />
       </div>
