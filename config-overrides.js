@@ -16,5 +16,9 @@ module.exports = override(
     libraryDirectory: 'react-icon',
     camel2DashComponentName: false
   }),
-  addWebpackPlugin(new NodePolyfillPlugin())
+  addWebpackPlugin(
+    new NodePolyfillPlugin({
+      excludeAliases: ['console']
+    })
+  )
 )
