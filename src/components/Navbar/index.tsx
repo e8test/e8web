@@ -44,6 +44,9 @@ export default function Navbar() {
           <Menu.Item key="/roadmap" className={styles.menu_link}>
             <Link to="/roadmap">Roadmap</Link>
           </Menu.Item>
+          <Menu.Item key="/dashboard" className={styles.menu_link}>
+            <Link to="/dashboard">Dashboard</Link>
+          </Menu.Item>
         </Menu>
         <Space>
           {account ? (
@@ -69,6 +72,7 @@ export default function Navbar() {
               <Menu.Item key="/bank">Bank</Menu.Item>
               <Menu.Item key="/market">Market</Menu.Item>
               <Menu.Item key="/roadmap">Roadmap</Menu.Item>
+              <Menu.Item key="/dashboard">Dashboard</Menu.Item>
             </Menu>
           }
           trigger="click"

@@ -1,8 +1,10 @@
 const {
   override,
   addWebpackAlias,
-  fixBabelImports
+  fixBabelImports,
+  addWebpackPlugin
 } = require('customize-cra')
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 const path = require('path')
 
 module.exports = override(
@@ -13,5 +15,6 @@ module.exports = override(
     libraryName: '@arco-design/web-react/icon',
     libraryDirectory: 'react-icon',
     camel2DashComponentName: false
-  })
+  }),
+  addWebpackPlugin(new NodePolyfillPlugin())
 )

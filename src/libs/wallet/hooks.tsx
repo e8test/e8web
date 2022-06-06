@@ -83,29 +83,43 @@ export function useInactiveListener(suppress = false) {
 
 export function useConnect() {
   const { activate, deactivate } = useWeb3React()
-  const connect = () => {
-    const el = document.createElement('div')
-    document.body.appendChild(el)
-    ReactDOM.render(
-      <WalletModal
-        onClose={() => {
-          ReactDOM.unmountComponentAtNode(el)
-          document.body.removeChild(el)
-        }}
-        onSelect={async item => {
-          if (item === 'MetaMask') activate(injected)
-          if (item === 'WalletConnect') {
-            try {
-              activate(walletconnect, () => {
-                window.location.reload()
-              })
-            } catch (error) {
+  const connect: () => Promise<string | null> = () => {
+    return new Promise((resolve, reject) => {
+      const el = document.createElement('div')
+      document.body.appendChild(el)
+      const close = () => {
+        ReactDOM.unmountComponentAtNode(el)
+        document.body.removeChild(el)
+      }
+      ReactDOM.render(
+        <WalletModal
+          onClose={() => {
+            close()
+            reject()
+          }}
+          onSelect={async item => {
+            if (item === 'MetaMask') {
+              await activate(injected)
+              const account = await injected.getAccount()
+              resolve(account || null)
             }
-          }
-        }}
-      />,
-      el
-    )
+            if (item === 'WalletConnect') {
+              try {
+                await activate(walletconnect, error => {
+                  console.trace(error)
+                  window.location.reload()
+                })
+                const account = await walletconnect.getAccount()
+                resolve(account || null)
+              } catch (error) {
+                reject(error)
+              }
+            }
+          }}
+        />,
+        el
+      )
+    })
   }
   const disconnect = () => {
     deactivate()

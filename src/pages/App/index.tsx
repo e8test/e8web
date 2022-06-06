@@ -15,6 +15,7 @@ import Expires from '@/pages/Expires'
 import Auctions from '@/pages/Auctions'
 import AuctionAdmin from '@/pages/AuctionAdmin'
 import Downgrades from '@/pages/Downgrades'
+import GlobalDashboard from '@/pages/GlobalDashboard'
 
 export default function App() {
   const { error } = useWeb3React()
@@ -33,13 +34,14 @@ export default function App() {
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="bank" element={<Bank />} />
           <Route path="market" element={<Auctions />} />
+          <Route path="dashboard" element={<Dashboard />} />
         </Route>
         <Route path="/console" element={<Console />}>
           <Route path="" element={<Applies />} />
           <Route path="expires" element={<Expires />} />
           <Route path="auctions" element={<AuctionAdmin />} />
-          <Route path="dashboard" element={<Dashboard />} />
           <Route path="downgrades" element={<Downgrades />} />
+          <Route path="dashboard" element={<GlobalDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>
