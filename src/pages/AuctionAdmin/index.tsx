@@ -12,7 +12,7 @@ import { ColumnProps } from '@arco-design/web-react/lib/Table'
 import { IconRefresh } from '@arco-design/web-react/icon'
 
 import styles from '../Applies/style.module.scss'
-import CONFIG, { level } from '@/config'
+import CONFIG, { level, isMobile } from '@/config'
 import useAuctions from '@/hooks/useAuctions'
 import { useWeb3React } from '@web3-react/core'
 
@@ -60,6 +60,7 @@ export default function AuctionAdmin() {
     {
       title: 'Status',
       dataIndex: 'status',
+      width: 150,
       render: (value, record) => {
         if (value === 1) {
           if (record.timeout > Date.now()) {
@@ -172,7 +173,12 @@ export default function AuctionAdmin() {
           onClick={listAll}
         />
       </div>
-      <Table columns={columns} data={auctions} rowKey="index" />
+      <Table
+        columns={columns}
+        data={auctions}
+        rowKey="index"
+        scroll={{ x: isMobile }}
+      />
     </div>
   )
 }

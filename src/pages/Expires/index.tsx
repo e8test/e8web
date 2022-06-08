@@ -12,7 +12,7 @@ import { ColumnProps } from '@arco-design/web-react/lib/Table'
 import { IconRefresh } from '@arco-design/web-react/icon'
 
 import styles from '../Applies/style.module.scss'
-import CONFIG from '@/config'
+import CONFIG, { isMobile } from '@/config'
 import useExpires from '@/hooks/useExpires'
 import * as util from '@/libs/util'
 
@@ -53,6 +53,7 @@ export default function Expires() {
     {
       title: 'Expires',
       dataIndex: 'timestamp',
+      width: 120,
       render: (value, record) => util.timeFormat(value + record.redeemExpire)
     },
     {
@@ -107,7 +108,12 @@ export default function Expires() {
           onClick={listExpires}
         />
       </div>
-      <Table columns={columns} data={expires} rowKey="tokenId" />
+      <Table
+        columns={columns}
+        data={expires}
+        rowKey="tokenId"
+        scroll={{ x: isMobile }}
+      />
     </div>
   )
 }

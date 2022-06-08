@@ -18,7 +18,7 @@ import { ColumnProps } from '@arco-design/web-react/lib/Table'
 import dayjs from 'dayjs'
 
 import styles from './style.module.scss'
-import CONFIG from '@/config'
+import CONFIG, { isMobile } from '@/config'
 import useApplies from '@/hooks/useApplies'
 import * as util from '@/libs/util'
 
@@ -62,6 +62,7 @@ export default function Applies() {
     {
       title: 'Time',
       dataIndex: 'timestamp',
+      width: 150,
       render: value => util.timeFormat(value)
     },
     {
@@ -159,7 +160,12 @@ export default function Applies() {
           onClick={listApplies}
         />
       </div>
-      <Table columns={columns} data={applies} rowKey="tokenId" />
+      <Table
+        columns={columns}
+        data={applies}
+        rowKey="tokenId"
+        scroll={{ x: isMobile }}
+      />
       <Modal
         title={'Quote - #' + current?.tokenId}
         visible={visible}

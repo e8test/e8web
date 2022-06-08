@@ -11,7 +11,7 @@ import { IconRefresh } from '@arco-design/web-react/icon'
 import { ColumnProps } from '@arco-design/web-react/lib/Table'
 
 import styles from '../Applies/style.module.scss'
-import CONFIG from '@/config'
+import CONFIG, { isMobile } from '@/config'
 import useDowngrades from '@/hooks/useDowngrades'
 
 export default function Downgrades() {
@@ -51,6 +51,7 @@ export default function Downgrades() {
     {
       title: 'Owner',
       dataIndex: 'owner',
+      width: 250,
       render: value => (
         <Tooltip content={value}>
           <Link href={CONFIG.ethscan + '/address/' + value} target="_blank">
@@ -91,7 +92,12 @@ export default function Downgrades() {
           onClick={listDowngrades}
         />
       </div>
-      <Table columns={columns} data={downgrades} rowKey="tokenId" />
+      <Table
+        columns={columns}
+        data={downgrades}
+        rowKey="tokenId"
+        scroll={{ x: isMobile }}
+      />
     </div>
   )
 }
