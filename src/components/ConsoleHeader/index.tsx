@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 
 import styles from '../Navbar/style.module.scss'
-import { level } from '@/config'
+import { level, isMobile } from '@/config'
 import LevelSwitch from '@/components/LevelSwitch'
 import { useConnect } from '@/libs/wallet/hooks'
 
@@ -12,6 +12,14 @@ export default function ConsoleHeader() {
   const { pathname } = useLocation()
   const { account } = useWeb3React()
 
+  const accountStr = () => {
+    if (!account) return ''
+    if (isMobile) {
+      return account.slice(0, 3) + '..' + account.slice(-2)
+    }
+    return account.slice(0, 5) + '...' + account.slice(-3)
+  }
+
   return (
     <header className={styles.navbar}>
       <div className={styles.logo}>Console</div>
@@ -19,7 +27,6 @@ export default function ConsoleHeader() {
         <Menu
           mode="horizontal"
           selectedKeys={[pathname]}
-          ellipsis={false}
           className={styles.menu}
         >
           <Menu.Item key="/console" className={styles.menu_link}>
@@ -42,8 +49,13 @@ export default function ConsoleHeader() {
         </Menu>
         <Space>
           {account ? (
-            <Button type="primary" shape="round" onClick={disconnect}>
-              {account.slice(0, 5) + '...' + account.slice(-3)}
+            <Button
+              size={isMobile ? 'small' : 'default'}
+              type="primary"
+              shape="round"
+              onClick={disconnect}
+            >
+              {accountStr()}
             </Button>
           ) : (
             <Button type="primary" shape="round" onClick={connect}>
