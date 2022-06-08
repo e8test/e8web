@@ -32,13 +32,18 @@ echarts.use([
 ])
 
 export default function GlobalDashboard() {
-  const { markets, balances, marketValues, getBalances } = useDashboard()
+  const { markets, balances, tokens, getTokens, marketValues, getBalances } =
+    useDashboard()
   const chart1 = useRef<HTMLDivElement>(null)
   const chart2 = useRef<HTMLDivElement>(null)
   const chart3 = useRef<HTMLDivElement>(null)
+  const chart4 = useRef<HTMLDivElement>(null)
+  const chart5 = useRef<HTMLDivElement>(null)
   const myChart1 = useRef<echarts.ECharts>()
   const myChart2 = useRef<echarts.ECharts>()
   const myChart3 = useRef<echarts.ECharts>()
+  const myChart4 = useRef<echarts.ECharts>()
+  const myChart5 = useRef<echarts.ECharts>()
 
   const load = useCallback(async () => {
     Message.loading({
@@ -46,37 +51,21 @@ export default function GlobalDashboard() {
       duration: 0
     })
     try {
-      await Promise.all([marketValues(), getBalances()])
+      await Promise.all([marketValues(), getBalances(), getTokens()])
     } finally {
       Message.clear()
     }
-  }, [marketValues, getBalances])
+  }, [marketValues, getBalances, getTokens])
 
   useEffect(() => {
     load()
   }, [load])
 
   const initChart1 = useCallback(async () => {
-    let data: any = []
-    if (balances.length && markets.length) {
-      data = [
-        {
-          value: balances[0] + markets[0],
-          name: '#1 NFT Pool'
-        },
-        {
-          value: balances[1] + markets[1],
-          name: '#2 NFT Pool'
-        },
-        {
-          value: balances[2] + markets[2],
-          name: '#3 Adverse Pool'
-        }
-      ]
-    }
+    const [reserve, , , totalSupply] = tokens
     myChart1.current!.setOption({
       title: {
-        text: 'Index Token Pool',
+        text: '#1 - Index Token Pool',
         left: 'center'
       },
       tooltip: {
@@ -86,16 +75,71 @@ export default function GlobalDashboard() {
         {
           type: 'pie',
           radius: '50%',
-          data: data,
+          data: [
+            { value: reserve, name: 'Reserve' },
+            { value: totalSupply - reserve, name: 'circulation' }
+          ],
           label: {
             formatter: '{b}: {c}'
           }
         }
       ]
     })
-  }, [markets, balances])
+  }, [tokens])
 
   const initChart2 = useCallback(async () => {
+    const [, reserve, , totalSupply] = tokens
+    myChart2.current!.setOption({
+      title: {
+        text: '#2 - Index Token Pool',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: '50%',
+          data: [
+            { value: reserve, name: 'Reserve' },
+            { value: totalSupply - reserve, name: 'circulation' }
+          ],
+          label: {
+            formatter: '{b}: {c}'
+          }
+        }
+      ]
+    })
+  }, [tokens])
+
+  const initChart3 = useCallback(async () => {
+    const [, , reserve, totalSupply] = tokens
+    myChart3.current!.setOption({
+      title: {
+        text: '#3 - Index Token Pool',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: '50%',
+          data: [
+            { value: reserve, name: 'Reserve' },
+            { value: totalSupply - reserve, name: 'circulation' }
+          ],
+          label: {
+            formatter: '{b}: {c}'
+          }
+        }
+      ]
+    })
+  }, [tokens])
+
+  const initChart4 = useCallback(async () => {
     if (markets.length === 0) return
     const data = [
       {
@@ -111,7 +155,7 @@ export default function GlobalDashboard() {
         name: '#3 Adverse Pool'
       }
     ]
-    myChart2.current!.setOption({
+    myChart4.current!.setOption({
       title: {
         text: 'NFT Market Value',
         left: 'center'
@@ -138,7 +182,7 @@ export default function GlobalDashboard() {
     })
   }, [markets])
 
-  const initChart3 = useCallback(async () => {
+  const initChart5 = useCallback(async () => {
     if (balances.length === 0) return
     const data = [
       {
@@ -154,7 +198,7 @@ export default function GlobalDashboard() {
         name: '#3 Adverse Pool'
       }
     ]
-    myChart3.current!.setOption({
+    myChart5.current!.setOption({
       title: {
         text: 'Token balance',
         left: 'center'
@@ -194,19 +238,33 @@ export default function GlobalDashboard() {
   }, [initChart3])
 
   useEffect(() => {
+    if (myChart4.current) initChart4()
+  }, [initChart4])
+
+  useEffect(() => {
+    if (myChart5.current) initChart5()
+  }, [initChart5])
+
+  useEffect(() => {
     myChart1.current = echarts.init(chart1.current!)
     myChart2.current = echarts.init(chart2.current!)
     myChart3.current = echarts.init(chart3.current!)
+    myChart4.current = echarts.init(chart4.current!)
+    myChart5.current = echarts.init(chart5.current!)
 
     window.onresize = () => {
       myChart1.current?.resize()
       myChart2.current?.resize()
       myChart3.current?.resize()
+      myChart4.current?.resize()
+      myChart5.current?.resize()
     }
     return () => {
       myChart1.current?.dispose()
       myChart2.current?.dispose()
       myChart3.current?.dispose()
+      myChart4.current?.dispose()
+      myChart5.current?.dispose()
       window.onresize = null
     }
   }, [])
@@ -216,6 +274,8 @@ export default function GlobalDashboard() {
       <div className={styles.chart} ref={chart1} />
       <div className={styles.chart} ref={chart2} />
       <div className={styles.chart} ref={chart3} />
+      <div className={styles.chart} ref={chart4} />
+      <div className={styles.chart} ref={chart5} />
     </div>
   )
 }

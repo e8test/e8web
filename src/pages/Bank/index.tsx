@@ -382,7 +382,7 @@ export default function Bank() {
               disabled={loading}
               onClick={() => setVisible(true)}
             >
-              Import NFT
+              Create NFT
             </Button>
           )}
         </Space>

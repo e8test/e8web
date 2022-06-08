@@ -26,6 +26,7 @@ export default function ConsoleHeader() {
       <div className={styles.navs}>
         <Menu
           mode="horizontal"
+          ellipsis={isMobile ? true : false}
           selectedKeys={[pathname]}
           className={styles.menu}
         >
@@ -38,7 +39,7 @@ export default function ConsoleHeader() {
           <Menu.Item key="/console/auctions" className={styles.menu_link}>
             <Link to="/console/auctions">Auctions</Link>
           </Menu.Item>
-          {level < 3 && (
+          {level === 3 && (
             <Menu.Item key="/console/downgrades" className={styles.menu_link}>
               <Link to="/console/downgrades">Downgrades</Link>
             </Menu.Item>

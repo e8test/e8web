@@ -36,13 +36,13 @@ export default function Console() {
     )
   }
 
-  if (account && admin && account.toLowerCase() !== admin) {
-    return (
-      <div className="page-result">
-        <Result status="warning" title="Not Administrator" />
-      </div>
-    )
-  }
+  // if (account && admin && account.toLowerCase() !== admin) {
+  //   return (
+  //     <div className="page-result">
+  //       <Result status="warning" title="Not Administrator" />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="page">

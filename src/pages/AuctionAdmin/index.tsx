@@ -98,7 +98,7 @@ export default function AuctionAdmin() {
               >
                 Destroy
               </Button>
-              {level > 1 && (
+              {level < 3 && (
                 <Button
                   type="primary"
                   disabled={loading}

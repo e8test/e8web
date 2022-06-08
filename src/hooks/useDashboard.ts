@@ -11,6 +11,7 @@ export default function useDashboard() {
   const provider = useProvider()
   const [markets, setMarkets] = useMemoState<number[]>('markets', [])
   const [balances, setBalances] = useMemoState<number[]>('balances', [])
+  const [tokens, setTokens] = useMemoState<number[]>('token-pools', [])
 
   const tokenContract = useMemo(() => {
     return new ethers.Contract(CONFIG.tokenAddr, ERC20ABI, provider)
@@ -27,6 +28,21 @@ export default function useDashboard() {
   const pool3 = useMemo(() => {
     return new ethers.Contract(CONFIG.pools[2], ROUTERABI, provider)
   }, [provider])
+
+  const getTokens = useCallback(async () => {
+    const result = await Promise.all([
+      tokenContract.balanceOf(CONFIG.pools[0]),
+      tokenContract.balanceOf(CONFIG.pools[1]),
+      tokenContract.balanceOf(CONFIG.pools[2]),
+      tokenContract.totalSupply()
+    ])
+    setTokens([
+      Number(ethers.utils.formatUnits(result[0])),
+      Number(ethers.utils.formatUnits(result[1])),
+      Number(ethers.utils.formatUnits(result[2])),
+      Number(ethers.utils.formatUnits(result[3]))
+    ])
+  }, [tokenContract, setTokens])
 
   const marketValues = useCallback(async () => {
     const actions = [
@@ -54,7 +70,9 @@ export default function useDashboard() {
   return {
     markets,
     balances,
+    tokens,
     marketValues,
-    getBalances
+    getBalances,
+    getTokens
   }
 }

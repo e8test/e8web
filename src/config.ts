@@ -7,14 +7,14 @@ const CONFIGS: IConfig = {
       tokenName: 'E8INDEX',
       nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
       auctions: [
-        '0xdd71da7F76A733F918908677958C29c3A6EB5287',
-        '0x2D898A485ace7497a61A31F11BC7af9d65029cD2',
-        '0x92DCe5BCc7259b4e330e8261e482D2a260FC35Ae'
+        '0x4380510fE182E34ec623357662f4535Fc8e6fa6D',
+        '0x1556Cd3D10bcda130E4ad919E50F3bEe61F015e7',
+        '0xB6a009dbDeB8C86Ee4cEd6AC8632ffc123ffCf56'
       ],
       pools: [
-        '0x97320Ff0E504aA0dcB47e6C8E11e859f70bA03E5',
-        '0x55b3FB9Eca28FaAba888199F12D30484947DC9f2',
-        '0xAa250fA9f8d2b2EE9Aa3D4067Bd71c93CF77DfC5'
+        '0x7F3bB4eC602324198380Fa8d5d8EA1D7dBD47b47',
+        '0x11291eE28779238839E12DCA62Eb651afC97AC0c',
+        '0xA8E9139ef060c86D00Ad8a47aB507d6D8995ED12'
       ],
       tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',
       logAddr:
@@ -37,7 +37,7 @@ export { CHAIN_IDS, URLS, CONFIGS }
 export const isMobile = window.outerWidth <= 768
 export const level = sessionStorage.getItem('level')
   ? Number(sessionStorage.getItem('level'))
-  : 3
-export const currentRouter = CONFIG.pools[level - 1]
-export const currentAuction = CONFIG.auctions[level - 1]
+  : 1
+export const currentRouter = CONFIG.pools[level- 1]
+export const currentAuction = CONFIG.auctions[level- 1]
 export default CONFIG

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ethers } from 'ethers'
 
 import { useProvider } from '@/libs/wallet/hooks'
@@ -44,13 +44,10 @@ export default function useCharts() {
     return rows
   }, [provider, setMarkets])
 
-  useEffect(() => {
-    marketValue()
-    getTokenInfo()
-  }, [marketValue, getTokenInfo])
-
   return {
     markets,
-    tokenInfo
+    tokenInfo,
+    marketValue,
+    getTokenInfo
   }
 }

@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react'
+import { Message } from '@arco-design/web-react'
 import { PieChart, LineChart } from 'echarts/charts'
 import {
   TitleComponent,
@@ -10,6 +11,7 @@ import {
 } from 'echarts/components'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
+import { useWeb3React } from '@web3-react/core'
 import * as echarts from 'echarts/core'
 
 import styles from './style.module.scss'
@@ -32,7 +34,8 @@ echarts.use([
 ])
 
 export default function Dashboard() {
-  const { tokenInfo, markets } = useCharts()
+  const { library } = useWeb3React()
+  const { tokenInfo, markets, getTokenInfo, marketValue } = useCharts()
   const chart1 = useRef<HTMLDivElement>(null)
   const chart2 = useRef<HTMLDivElement>(null)
   const chart3 = useRef<HTMLDivElement>(null)
@@ -47,6 +50,22 @@ export default function Dashboard() {
   const myChart5 = useRef<echarts.ECharts>()
   const myChart6 = useRef<echarts.ECharts>()
   const myChart7 = useRef<echarts.ECharts>()
+
+  const load = useCallback(async () => {
+    Message.loading({
+      content: 'Loading...',
+      duration: 0
+    })
+    try {
+      await Promise.all([getTokenInfo(), marketValue()])
+    } finally {
+      Message.clear()
+    }
+  }, [getTokenInfo, marketValue])
+
+  useEffect(() => {
+    if (library) load()
+  }, [load, library])
 
   const initChart1 = useCallback(async () => {
     const { reserve, totalSupply } = tokenInfo

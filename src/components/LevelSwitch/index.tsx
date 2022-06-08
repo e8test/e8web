@@ -25,9 +25,9 @@ export default function LevelSwitch() {
     <Dropdown
       droplist={
         <Menu onClickMenuItem={key => switchPool(key)}>
-          <Menu.Item key="3">#3 Adverse Pool</Menu.Item>
-          <Menu.Item key="2">#2 NFT Pool</Menu.Item>
           <Menu.Item key="1">#1 NFT Pool</Menu.Item>
+          <Menu.Item key="2">#2 NFT Pool</Menu.Item>
+          <Menu.Item key="3">#3 Adverse Pool</Menu.Item>
         </Menu>
       }
       trigger="click"
