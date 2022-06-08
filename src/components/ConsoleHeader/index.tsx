@@ -1,6 +1,7 @@
-import { Menu, Button, Space } from '@arco-design/web-react'
-import { useLocation, Link } from 'react-router-dom'
+import { Menu, Button, Dropdown, Space } from '@arco-design/web-react'
+import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
+import { IconMenu } from '@arco-design/web-react/icon'
 
 import styles from '../Navbar/style.module.scss'
 import { level, isMobile } from '@/config'
@@ -8,6 +9,7 @@ import LevelSwitch from '@/components/LevelSwitch'
 import { useConnect } from '@/libs/wallet/hooks'
 
 export default function ConsoleHeader() {
+  const navigate = useNavigate()
   const { connect, disconnect } = useConnect()
   const { pathname } = useLocation()
   const { account } = useWeb3React()
@@ -23,10 +25,10 @@ export default function ConsoleHeader() {
   return (
     <header className={styles.navbar}>
       <div className={styles.logo}>Console</div>
-      <div className={styles.navs}>
+      <div className={styles.menus}>
         <Menu
           mode="horizontal"
-          ellipsis={isMobile ? true : false}
+          ellipsis={false}
           selectedKeys={[pathname]}
           className={styles.menu}
         >
@@ -65,6 +67,27 @@ export default function ConsoleHeader() {
           )}
           <LevelSwitch />
         </Space>
+        <Dropdown
+          droplist={
+            <Menu onClickMenuItem={key => navigate(key)}>
+              <Menu.Item key="/console">Application</Menu.Item>
+              <Menu.Item key="/console/expires">Expires</Menu.Item>
+              <Menu.Item key="/console/auctions">Auctions</Menu.Item>
+              {level === 3 && (
+                <Menu.Item key="/console/downgrades">Downgrades</Menu.Item>
+              )}
+              <Menu.Item key="/console/dashboard">Dashboard</Menu.Item>
+            </Menu>
+          }
+          trigger="click"
+          position="br"
+        >
+          <Button
+            size={isMobile ? 'small' : 'default'}
+            icon={<IconMenu />}
+            className={styles.menu_btn}
+          />
+        </Dropdown>
       </div>
     </header>
   )
