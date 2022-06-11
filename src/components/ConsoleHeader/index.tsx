@@ -32,9 +32,6 @@ export default function ConsoleHeader() {
           selectedKeys={[pathname]}
           className={styles.menu}
         >
-          <Menu.Item key="/console" className={styles.menu_link}>
-            <Link to="/console">Application</Link>
-          </Menu.Item>
           <Menu.Item key="/console/expires" className={styles.menu_link}>
             <Link to="/console/expires">Expires</Link>
           </Menu.Item>
@@ -70,7 +67,6 @@ export default function ConsoleHeader() {
         <Dropdown
           droplist={
             <Menu onClickMenuItem={key => navigate(key)}>
-              <Menu.Item key="/console">Application</Menu.Item>
               <Menu.Item key="/console/expires">Expires</Menu.Item>
               <Menu.Item key="/console/auctions">Auctions</Menu.Item>
               {level === 3 && (

@@ -10,7 +10,6 @@ import Dashboard from '@/pages/Dashboard'
 import Home from '@/pages/Emptys/Home'
 import Roadmap from '@/pages/Emptys/Roadmap'
 import Console from '@/pages/Console'
-import Applies from '@/pages/Applies'
 import Expires from '@/pages/Expires'
 import Auctions from '@/pages/Auctions'
 import AuctionAdmin from '@/pages/AuctionAdmin'
@@ -44,7 +43,7 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
         <Route path="/console" element={<Console />}>
-          <Route path="" element={<Applies />} />
+          <Route path="" element={<Expires />} />
           <Route path="expires" element={<Expires />} />
           <Route path="auctions" element={<AuctionAdmin />} />
           <Route path="downgrades" element={<Downgrades />} />
