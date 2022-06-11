@@ -4,9 +4,10 @@ import { Web3Provider } from '@ethersproject/providers'
 import { Message } from '@arco-design/web-react'
 import { ethers } from 'ethers'
 
-import CONFIG, { currentRouter } from '@/config'
+import CONFIG, { currentRouter, currentDAO } from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
 import ROUTERABI from '@/libs/abis/router.json'
+import DAOABI from '@/libs/abis/dao.json'
 import useMemoState from './useMemoState'
 
 export default function useApplies() {
@@ -25,6 +26,14 @@ export default function useApplies() {
     )
   }, [library])
 
+  const daoContract = useMemo(() => {
+    return new ethers.Contract(
+      currentDAO,
+      DAOABI,
+      library?.getSigner()
+    )
+  }, [library])
+
   const getNFT = useCallback(
     async (tokenId: number) => {
       const [uri, owner] = await Promise.all([
@@ -35,6 +44,20 @@ export default function useApplies() {
     },
     [nftContract]
   )
+
+  const quoteHistory = useCallback(async (tokenId: number) => {
+    const count = await daoContract.quoteCount(CONFIG.nftAddr, tokenId)
+    const actions = []
+    for (let i = 1; i <= count.toNumber(); i++) {
+      actions.push(daoContract.queryQuote(CONFIG.nftAddr, tokenId, i))
+    }
+    const items = await Promise.all(actions)
+    const rows = items.map(item => ({
+      addr: item[0],
+      value: Number(ethers.utils.formatUnits(item[1]))
+    }))
+    return rows
+  }, [daoContract])
 
   const listApplies = useCallback(async () => {
     const handle = Message.loading({
@@ -48,10 +71,15 @@ export default function useApplies() {
     }
     const infos = await Promise.all(idActions)
     const nftActions = []
+    const quoteActions = []
     for (const info of infos) {
       nftActions.push(getNFT(info.tokenId))
+      quoteActions.push(quoteHistory(info.tokenId))
     }
     const nfts = await Promise.all(nftActions)
+    const quotes = await Promise.all(quoteActions)
+    console.log('=============quotes=============')
+    console.log(quotes)
     const rows = infos
       .map((info, i) => ({
         tokenId: info.tokenId.toNumber(),
@@ -59,6 +87,7 @@ export default function useApplies() {
         timestamp: info.timestamp.toNumber(),
         token: info.token,
         uri: nfts[i].uri,
+        quotes: quotes[i],
         owner: nfts[i].owner
       }))
       .reverse()
@@ -66,7 +95,18 @@ export default function useApplies() {
     console.log(rows)
     setApplies(rows)
     handle()
-  }, [routerContract, setApplies, getNFT])
+  }, [routerContract, setApplies, quoteHistory, getNFT])
+
+  // 估价
+  const pricing = useCallback(async (tokenId: number, value: number) => {
+    const trans = await daoContract.pricing(
+      CONFIG.nftAddr,
+      tokenId,
+      ethers.utils.parseEther(value.toString())
+    )
+    await trans.wait(1)
+    listApplies()
+  }, [daoContract, listApplies])
 
   const setPrice = useCallback(
     async (
@@ -91,12 +131,14 @@ export default function useApplies() {
   useEffect(() => {
     if (account) {
       listApplies()
+      // routerContract.setDao('0xaebF1be0527F39a5446BaBa4cF6Cc2bbb8B18a02')
     }
   }, [listApplies, account, routerContract])
 
   return {
     applies,
     setPrice,
+    pricing,
     listApplies
   }
 }

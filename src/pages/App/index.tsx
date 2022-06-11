@@ -16,6 +16,9 @@ import Auctions from '@/pages/Auctions'
 import AuctionAdmin from '@/pages/AuctionAdmin'
 import Downgrades from '@/pages/Downgrades'
 import GlobalDashboard from '@/pages/GlobalDashboard'
+import DAO from '@/pages/DAO'
+import DaoDeposit from '@/pages/DAO/Deposit'
+import DaoApplies from '@/pages/DAO/Applies'
 
 export default function App() {
   const { error } = useWeb3React()
@@ -34,6 +37,10 @@ export default function App() {
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="bank" element={<Bank />} />
           <Route path="market" element={<Auctions />} />
+          <Route path="dao" element={<DAO />}>
+            <Route path="" element={<DaoDeposit />} />
+            <Route path="applies" element={<DaoApplies />} />
+          </Route>
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
         <Route path="/console" element={<Console />}>

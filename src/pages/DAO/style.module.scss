@@ -1,0 +1,25 @@
+.form {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  margin-top: 50px;
+}
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.input {
+  flex: 1;
+}
+.main {
+  margin-top: 20px;
+}
+.cover {
+  width: 200px;
+}

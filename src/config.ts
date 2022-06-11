@@ -1,22 +1,28 @@
 const CONFIGS: IConfig = {
-  current: 97,
+  current: 256,
   networks: {
-    97: {
-      rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
-      ethscan: 'https://testnet.bscscan.com',
+    256: {
+      rpc: 'https://http-testnet.hecochain.com/',
+      ethscan: 'https://testnet.hecoinfo.com',
       tokenName: 'E8INDEX',
-      nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
+      nftAddr: '0x0E2a8B564114Fe87763c27b5fC8d0249DDe93C7a',
       auctions: [
-        '0x4380510fE182E34ec623357662f4535Fc8e6fa6D',
+        '0xA37F0948f5DE04F6603Ed302A84aBaC1Bc59D874',
         '0x1556Cd3D10bcda130E4ad919E50F3bEe61F015e7',
         '0xB6a009dbDeB8C86Ee4cEd6AC8632ffc123ffCf56'
       ],
       pools: [
-        '0x7F3bB4eC602324198380Fa8d5d8EA1D7dBD47b47',
+        '0xd1f44e38ae2076241Ac1Eac0EA8c8135A8A9c279',
         '0x11291eE28779238839E12DCA62Eb651afC97AC0c',
         '0xA8E9139ef060c86D00Ad8a47aB507d6D8995ED12'
       ],
-      tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',
+      daos: [
+        '0xDb993B8F5c7f0c881285c0958961d9Ed6D799AED',
+        '0xaebF1be0527F39a5446BaBa4cF6Cc2bbb8B18a02',
+        '0xaebF1be0527F39a5446BaBa4cF6Cc2bbb8B18a02'
+      ],
+      e8tAddr: '0x90999769b724D70F73Bd4164f805f6D4Da2baebD',
+      tokenAddr: '0xF7aC1C2A9B3054d7438D377C26fd41c368fe8807',
       logAddr:
         '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
     }
@@ -40,4 +46,5 @@ export const level = sessionStorage.getItem('level')
   : 1
 export const currentRouter = CONFIG.pools[level- 1]
 export const currentAuction = CONFIG.auctions[level- 1]
+export const currentDAO = CONFIG.daos[level- 1]
 export default CONFIG

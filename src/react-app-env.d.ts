@@ -7,9 +7,11 @@ declare interface IConfig {
       rpc: string
       ethscan: string
       tokenName: string
+      e8tAddr: string
       nftAddr: string
       auctions: string[]
       pools: string[]
+      daos: string[]
       tokenAddr: string
       logAddr: string
     }
@@ -34,6 +36,10 @@ declare interface IApply {
   quote: number
   timestamp: number
   token: string
+  quotes: {
+    addr: string
+    value: number
+  }[]
   uri: string
 }
 

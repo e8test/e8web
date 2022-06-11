@@ -70,6 +70,9 @@ body {
     padding: 0 10px;
   }
 }
+.arco-dropdown-menu {
+  max-height: inherit !important;
+}
 @media screen and (max-width: 768px) {
   .arco-btn-size-large {
     padding: 0 15px;

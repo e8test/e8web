@@ -107,7 +107,7 @@ export function useConnect() {
               try {
                 await activate(walletconnect, error => {
                   console.trace(error)
-                  window.location.reload()
+                  // window.location.reload()
                 })
                 const account = await walletconnect.getAccount()
                 resolve(account || null)
