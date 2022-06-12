@@ -17,7 +17,7 @@ const CONFIGS: IConfig = {
         '0xA8E9139ef060c86D00Ad8a47aB507d6D8995ED12'
       ],
       daos: [
-        '0xDb993B8F5c7f0c881285c0958961d9Ed6D799AED',
+        '0x98f011CF64Cc48A9fA02ae622cE65C9a5805d7ee',
         '0xaebF1be0527F39a5446BaBa4cF6Cc2bbb8B18a02',
         '0xaebF1be0527F39a5446BaBa4cF6Cc2bbb8B18a02'
       ],
