@@ -78,13 +78,16 @@ export default function useDAO() {
 
   // 抵押
   const deposit = useCallback(
-    async (count: number) => {
+    async (count: number, deposited: number) => {
       setDoing('deposit')
       try {
-        const value = ethers.utils.parseEther(count.toString())
-        const previous = await daoContract.findBalancePosition(count)
+        const value = ethers.utils.parseEther((count + deposited).toString())
+        const previous = await daoContract.findBalancePosition(value)
         console.log(value.toString(), previous, account)
-        const trans = await daoContract.deposit(value, previous)
+        const trans = await daoContract.deposit(
+          ethers.utils.parseEther(count.toString()),
+          previous
+        )
         await trans.wait(1)
         fetchData()
       } catch (error) {

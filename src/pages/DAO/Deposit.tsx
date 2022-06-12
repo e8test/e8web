@@ -53,7 +53,7 @@ export default function Deposit() {
       duration: 0
     })
     try {
-      await deposit(value!)
+      await deposit(value!, deposits)
     } catch (error) {
       Message.warning('Transaction canceled')
     } finally {
