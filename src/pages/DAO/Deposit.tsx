@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Form, InputNumber, Button, Message } from '@arco-design/web-react'
+import {
+  Form,
+  InputNumber,
+  Button,
+  Message,
+  Tooltip,
+  Link
+} from '@arco-design/web-react'
 import { useNavigate } from 'react-router-dom'
 
+import CONFIG from '@/config'
 import styles from './style.module.scss'
 import { useConnect } from '@/libs/wallet/hooks'
 import ButtonTab from '@/components/ButtonTab'
@@ -21,6 +29,7 @@ export default function Deposit() {
     allowance,
     daoLimit,
     isMember,
+    members,
     isDaoMember,
     deposit,
     approve,
@@ -181,6 +190,26 @@ export default function Deposit() {
                 >
                   Quit
                 </Button>
+              </Form.Item>
+            )}
+            {members.length > 0 && (
+              <Form.Item>
+                <div className={styles.line}>
+                  <div className={styles.title}>DAO members</div>
+                </div>
+                {members.map(item => (
+                  <div className={styles.line} key={item.addr}>
+                    <Tooltip content={item.addr}>
+                      <Link
+                        href={CONFIG.ethscan + '/address/' + item.addr}
+                        target="_blank"
+                      >
+                        {item.addr.slice(0, 10)}...{item.addr.slice(-8)}
+                      </Link>
+                    </Tooltip>
+                    <span>{item.value} E8T</span>
+                  </div>
+                ))}
               </Form.Item>
             )}
           </Form>
