@@ -212,6 +212,14 @@ export default function Deposit() {
                 ))}
               </Form.Item>
             )}
+            <Form.Item>
+              <div className={styles.line}>
+                <div className={styles.tip}>
+                  Top 3 users on the deposit ranking list can participate in DAO
+                  valuation.
+                </div>
+              </div>
+            </Form.Item>
           </Form>
         </div>
       </div>

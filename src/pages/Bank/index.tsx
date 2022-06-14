@@ -427,7 +427,7 @@ export default function Bank() {
         </Form>
       </Modal>
       <Modal
-        title="Import NFT"
+        title="Create NFT"
         visible={visible}
         onCancel={() => setVisible(false)}
         style={{ maxWidth: '90%' }}
