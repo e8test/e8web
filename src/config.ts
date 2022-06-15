@@ -1,5 +1,5 @@
 const CONFIGS: IConfig = {
-  current: 256,
+  current: 97,
   networks: {
     256: {
       rpc: 'https://http-testnet.hecochain.com/',
@@ -25,7 +25,32 @@ const CONFIGS: IConfig = {
       tokenAddr: '0xF7aC1C2A9B3054d7438D377C26fd41c368fe8807',
       logAddr:
         '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
-    }
+    },
+    97: {
+      rpc: 'https://bsc-dataseed.binance.org/',
+      ethscan: 'https://testnet.bscscan.com',
+      tokenName: 'E8INDEX',
+      nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
+      auctions: [
+        '0x2aDe8C140b3644E4d622C585485D9Ba41578220A',
+        '0x6bA6E7033130108f89BD260E21E7F31CC6Ba89B4',
+        '0xA3AFA515e27Ff8b77f9559d69A286E486C319868'
+      ],
+      pools: [
+        '0x04ccb9C27683B90B4644257811731Ad07218050F',
+        '0xC6C2FE9662d7719CB94d18941a17669cc178d2E4',
+        '0x9ae61A5a34c959d4CC378b2673555d487dBf6Bfe'
+      ],
+      daos: [
+        '0x679baFd054410fe12BD621a8D63FCfd628d495c3',
+        '0x66d1Cb6969b76671FD1c4B979050405C20742898',
+        '0xE058Bdb594cee080C955c1DD668743AAB910e58e'
+      ],
+      e8tAddr: '0x8Dd02fFafD4df297D2d5F7b35cbdb909F39D7f75',
+      tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',
+      logAddr:
+        '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
+    },
   }
 }
 
