@@ -23,3 +23,18 @@
 .cover {
   width: 200px;
 }
+.title {
+  text-align: center;
+  flex: 1;
+}
+.tip {
+  text-align: center;
+  flex: 1;
+  color: var(--color-text-2);
+}
+
+@media screen and (max-width: 600px) {
+  .form {
+    margin-top: 0;
+  }
+}

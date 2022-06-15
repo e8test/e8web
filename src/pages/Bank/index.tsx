@@ -10,7 +10,8 @@ import {
   Input,
   Message,
   InputNumber,
-  FormInstance
+  FormInstance,
+  Statistic
 } from '@arco-design/web-react'
 import { IconImage, IconRefresh } from '@arco-design/web-react/icon'
 import { useWeb3React } from '@web3-react/core'
@@ -101,16 +102,26 @@ export default function Bank() {
     }
     if (nft.price && nft.depositExpire && nft.depositExpire > Date.now()) {
       return (
-        <Button
-          long
-          size="large"
-          type="outline"
-          className={styles.btn}
-          disabled={loading}
-          onClick={() => depositConfirm(nft)}
-        >
-          #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Pledge
-        </Button>
+        <div className={styles.bottom}>
+          <div className={styles.tip}>
+            <span>This quote is valid for </span>
+            <Statistic.Countdown
+              now={Date.now()}
+              value={nft.depositExpire}
+              onFinish={() => window.location.reload()}
+            />
+            .
+          </div>
+          <Button
+            long
+            size="large"
+            type="outline"
+            disabled={loading}
+            onClick={() => depositConfirm(nft)}
+          >
+            #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Pledge
+          </Button>
+        </div>
       )
     }
     return (
@@ -134,15 +145,25 @@ export default function Bank() {
     }
     if (depositApproved) {
       return (
-        <Button
-          long
-          size="large"
-          type="outline"
-          className={styles.btn}
-          onClick={() => onRedemption(nft.tokenId)}
-        >
-          #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Redeem
-        </Button>
+        <div className={styles.bottom}>
+          <div className={styles.tip}>
+            <span>This quote is valid for </span>
+            <Statistic.Countdown
+              now={Date.now()}
+              value={nft.redeemExpire + nft.timestamp}
+              onFinish={() => window.location.reload()}
+            />
+            .
+          </div>
+          <Button
+            long
+            size="large"
+            type="outline"
+            onClick={() => onRedemption(nft.tokenId)}
+          >
+            #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Redeem
+          </Button>
+        </div>
       )
     }
     return (
@@ -427,7 +448,7 @@ export default function Bank() {
         </Form>
       </Modal>
       <Modal
-        title="Import NFT"
+        title="Create NFT"
         visible={visible}
         onCancel={() => setVisible(false)}
         style={{ maxWidth: '90%' }}

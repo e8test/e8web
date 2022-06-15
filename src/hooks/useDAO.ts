@@ -15,6 +15,7 @@ export default function useDAO() {
   const [allowance, setAllowance] = useState(0)
   const [daoLimit, setDaoLimit] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [members, setMembers] = useState<{ addr: string; value: number }[]>([])
   const [doing, setDoing] = useState<'deposit' | 'quit' | 'approve'>()
 
   const daoContract = useMemo(() => {
@@ -60,6 +61,32 @@ export default function useDAO() {
     setDaoLimit(value)
   }, [daoContract])
 
+  const getMembers = useCallback(async () => {
+    const members: string[] = []
+    const valid = (addr: string) => {
+      return /^0x(0){40}$/.test(addr) === false
+    }
+    const first = await daoContract.first()
+    if (valid(first)) {
+      members.push(first)
+      const second = await daoContract.next(first)
+      if (valid(second)) {
+        members.push(second)
+        const third = await daoContract.next(second)
+        if (valid(third)) members.push(third)
+      }
+    }
+    const actions = members.map(item => daoContract.balanceOf(item))
+    const result = await Promise.all(actions)
+    const rows = members.map((item, i) => ({
+      addr: item,
+      value: Number(ethers.utils.formatUnits(result[i]))
+    }))
+    console.log('=========members=========')
+    console.log(rows)
+    setMembers(rows)
+  }, [daoContract])
+
   const fetchData = useCallback(async () => {
     if (!account) return
     setLoading(true)
@@ -69,22 +96,34 @@ export default function useDAO() {
         balanceOf(),
         myDeposit(),
         myAllowance(),
-        getDaoLimit()
+        getDaoLimit(),
+        getMembers()
       ])
     } finally {
       setLoading(false)
     }
-  }, [isDaoMember, balanceOf, myDeposit, myAllowance, getDaoLimit, account])
+  }, [
+    isDaoMember,
+    balanceOf,
+    myDeposit,
+    myAllowance,
+    getDaoLimit,
+    getMembers,
+    account
+  ])
 
   // 抵押
   const deposit = useCallback(
-    async (count: number) => {
+    async (count: number, deposited: number) => {
       setDoing('deposit')
       try {
-        const value = ethers.utils.parseEther(count.toString())
-        const previous = await daoContract.findBalancePosition(count)
+        const value = ethers.utils.parseEther((count + deposited).toString())
+        const previous = await daoContract.findBalancePosition(value)
         console.log(value.toString(), previous, account)
-        const trans = await daoContract.deposit(value, previous)
+        const trans = await daoContract.deposit(
+          ethers.utils.parseEther(count.toString()),
+          previous
+        )
         await trans.wait(1)
         fetchData()
       } catch (error) {
@@ -134,6 +173,7 @@ export default function useDAO() {
     doing,
     daoLimit,
     allowance,
+    members,
     isDaoMember,
     deposit,
     approve,
