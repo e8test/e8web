@@ -27,7 +27,7 @@ const CONFIGS: IConfig = {
         '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
     },
     97: {
-      rpc: 'https://bsc-dataseed.binance.org/',
+      rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
       ethscan: 'https://testnet.bscscan.com',
       tokenName: 'E8INDEX',
       nftAddr: '0xB6B83EFa0ac59d085562934a873d784D9BA2949e',
