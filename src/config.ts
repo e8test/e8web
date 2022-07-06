@@ -48,6 +48,7 @@ const CONFIGS: IConfig = {
       ],
       e8tAddr: '0x8Dd02fFafD4df297D2d5F7b35cbdb909F39D7f75',
       tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',
+      whiteAddr: '0xC5154C540D9b578aEbab358EeF051F6C968A6743',
       logAddr:
         '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
     },
