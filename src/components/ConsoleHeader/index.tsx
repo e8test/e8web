@@ -46,6 +46,9 @@ export default function ConsoleHeader() {
           <Menu.Item key="/console/dashboard" className={styles.menu_link}>
             <Link to="/console/dashboard">Dashboard</Link>
           </Menu.Item>
+          <Menu.Item key="/console/whitelist" className={styles.menu_link}>
+            <Link to="/console/whitelist">Whitelist</Link>
+          </Menu.Item>
         </Menu>
         <Space>
           {account ? (
@@ -73,6 +76,7 @@ export default function ConsoleHeader() {
                 <Menu.Item key="/console/downgrades">Downgrades</Menu.Item>
               )}
               <Menu.Item key="/console/dashboard">Dashboard</Menu.Item>
+              <Menu.Item key="/console/whitelist">Whitelist</Menu.Item>
             </Menu>
           }
           trigger="click"

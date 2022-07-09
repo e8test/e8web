@@ -23,6 +23,7 @@ const CONFIGS: IConfig = {
       ],
       e8tAddr: '0x90999769b724D70F73Bd4164f805f6D4Da2baebD',
       tokenAddr: '0xF7aC1C2A9B3054d7438D377C26fd41c368fe8807',
+      whiteAddr: '',
       logAddr:
         '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
     },
@@ -48,10 +49,10 @@ const CONFIGS: IConfig = {
       ],
       e8tAddr: '0x8Dd02fFafD4df297D2d5F7b35cbdb909F39D7f75',
       tokenAddr: '0xf8b2BA003C47c997e3ffa4ebb94cf17183c9e190',
-      whiteAddr: '0xC5154C540D9b578aEbab358EeF051F6C968A6743',
+      whiteAddr: '0x644d78b37Cd2dDbFaBD50317697BEC1a7d8a8f7f',
       logAddr:
         '0x855fddac7e02437f0a70fb21886d84e258ce331cce8154890dd9d805089e60c8'
-    },
+    }
   }
 }
 
@@ -70,7 +71,7 @@ export const isMobile = window.outerWidth <= 768
 export const level = sessionStorage.getItem('level')
   ? Number(sessionStorage.getItem('level'))
   : 1
-export const currentRouter = CONFIG.pools[level- 1]
-export const currentAuction = CONFIG.auctions[level- 1]
-export const currentDAO = CONFIG.daos[level- 1]
+export const currentRouter = CONFIG.pools[level - 1]
+export const currentAuction = CONFIG.auctions[level - 1]
+export const currentDAO = CONFIG.daos[level - 1]
 export default CONFIG

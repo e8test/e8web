@@ -18,10 +18,6 @@ export default function useAuctions() {
   const [owner, setOwner] = useMemoState<string>('auctionOwner', '')
   const [allowance, setAllowance] = useMemoState<number>('tokenBalance', 0)
 
-  const nftContract = useMemo(() => {
-    return new ethers.Contract(CONFIG.nftAddr, NFTABI, library?.getSigner())
-  }, [library])
-
   const auctionContract = useMemo(() => {
     return new ethers.Contract(currentAuction, AUCTIONABI, library?.getSigner())
   }, [library])
@@ -59,7 +55,12 @@ export default function useAuctions() {
       } else {
         result = await auctionContract.auctionByIndex(index)
       }
-      const uri = await nftContract.tokenURI(result.tokenId)
+      const contract = new ethers.Contract(
+        result.token,
+        NFTABI,
+        library?.getSigner()
+      )
+      const uri = await contract.tokenURI(result.tokenId)
       const obj: IAuction = {
         index,
         bidTimes: result.bidTimes.toNumber(),
@@ -74,7 +75,7 @@ export default function useAuctions() {
       }
       return obj
     },
-    [auctionContract, nftContract]
+    [auctionContract, library]
   )
 
   const listAll = useCallback(async () => {

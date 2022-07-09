@@ -6,9 +6,9 @@ export function sleep(timeout: number) {
   })
 }
 
-export function formatAccount(addr: string) {
-  const start = addr.slice(0, 5)
-  const end = addr.slice(-5)
+export function formatAccount(addr: string, length = 5) {
+  const start = addr.slice(0, length)
+  const end = addr.slice(-length)
   return `${start}...${end}`
 }
 

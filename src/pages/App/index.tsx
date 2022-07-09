@@ -15,6 +15,7 @@ import Auctions from '@/pages/Auctions'
 import AuctionAdmin from '@/pages/AuctionAdmin'
 import Downgrades from '@/pages/Downgrades'
 import GlobalDashboard from '@/pages/GlobalDashboard'
+import Whitelist from '@/pages/Whitelist'
 import DAO from '@/pages/DAO'
 import DaoDeposit from '@/pages/DAO/Deposit'
 import DaoApplies from '@/pages/DAO/Applies'
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="auctions" element={<AuctionAdmin />} />
           <Route path="downgrades" element={<Downgrades />} />
           <Route path="dashboard" element={<GlobalDashboard />} />
+          <Route path="whitelist" element={<Whitelist />} />
         </Route>
       </Routes>
     </BrowserRouter>

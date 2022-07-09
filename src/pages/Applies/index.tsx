@@ -133,7 +133,8 @@ export default function Applies() {
         tokenId || current!.tokenId,
         form.price,
         form.depositExpire,
-        form.redeemExpire
+        form.redeemExpire,
+        current!.token
       )
       handle()
       setCurrent(undefined)

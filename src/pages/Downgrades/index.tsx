@@ -18,14 +18,14 @@ export default function Downgrades() {
   const [loading, setLoading] = useState(false)
   const { downgrades, listDowngrades, withdrawNFT } = useDowngrades()
 
-  const onWithdraw = async (tokenId: number) => {
+  const onWithdraw = async (tokenId: number, addr: string) => {
     try {
       setLoading(true)
       const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
-      await withdrawNFT(tokenId)
+      await withdrawNFT(tokenId, addr)
       handle()
       Message.success('Transaction confirmed')
     } catch (error) {
@@ -69,7 +69,7 @@ export default function Downgrades() {
           <Button
             type="primary"
             disabled={loading}
-            onClick={() => onWithdraw(record.tokenId)}
+            onClick={() => onWithdraw(record.tokenId, record.token)}
           >
             Withdraw
           </Button>

@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { Message } from '@arco-design/web-react'
 import { ethers } from 'ethers'
 
-import CONFIG, { currentRouter } from '@/config'
+import { currentRouter } from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
 import ROUTERABI from '@/libs/abis/router.json'
 import useMemoState from './useMemoState'
@@ -16,23 +16,24 @@ export default function useDowngrades() {
   )
   const { account, library } = useWeb3React<Web3Provider>()
 
-  const nftContract = useMemo(() => {
-    return new ethers.Contract(CONFIG.nftAddr, NFTABI, library?.getSigner())
-  }, [library])
-
   const routerContract = useMemo(() => {
     return new ethers.Contract(currentRouter, ROUTERABI, library?.getSigner())
   }, [library])
 
   const getNFT = useCallback(
-    async (tokenId: number) => {
+    async (tokenId: number, addr: string) => {
+      const contract = new ethers.Contract(
+        addr,
+        NFTABI,
+        library?.getSigner()
+      )
       const [uri, owner] = await Promise.all([
-        nftContract.tokenURI(tokenId),
-        nftContract.ownerOf(tokenId)
+        contract.tokenURI(tokenId),
+        contract.ownerOf(tokenId)
       ])
       return { uri, owner }
     },
-    [nftContract]
+    [library]
   )
 
   const listDowngrades = useCallback(async () => {
@@ -48,7 +49,7 @@ export default function useDowngrades() {
     const infos = await Promise.all(idActions)
     const nftActions = []
     for (const info of infos) {
-      nftActions.push(getNFT(info[1]))
+      nftActions.push(getNFT(info[1], info[0]))
     }
     const nfts = await Promise.all(nftActions)
     const rows = infos
@@ -66,10 +67,10 @@ export default function useDowngrades() {
   }, [routerContract, setDowngrades, getNFT])
 
   const withdrawNFT = useCallback(
-    async (tokenId: number) => {
+    async (tokenId: number, addr: string) => {
       const trans = await routerContract.withdrawNFT(
         account,
-        CONFIG.nftAddr,
+        addr,
         tokenId
       )
       await trans.wait(1)

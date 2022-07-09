@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { ethers, BigNumber } from 'ethers'
 import { Message } from '@arco-design/web-react'
 
-import CONFIG, { currentRouter } from '@/config'
+import { currentRouter } from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
 import ROUTERABI from '@/libs/abis/router.json'
 import useMemoState from './useMemoState'
@@ -13,21 +13,18 @@ export default function useExpires() {
   const [expires, setExpires] = useMemoState<INFT[]>('expires', [])
   const { account, library } = useWeb3React<Web3Provider>()
 
-  const nftContract = useMemo(() => {
-    return new ethers.Contract(CONFIG.nftAddr, NFTABI, library?.getSigner())
-  }, [library])
-
   const routerContract = useMemo(() => {
     return new ethers.Contract(currentRouter, ROUTERABI, library?.getSigner())
   }, [library])
 
   // 获取单个NFT信息
   const getNFT = useCallback(
-    async (tokenId: BigNumber) => {
+    async (tokenId: BigNumber, addr: string) => {
+      const contract = new ethers.Contract(addr, NFTABI, library?.getSigner())
       const result = await Promise.all([
-        nftContract.tokenURI(tokenId),
-        nftContract.getApproved(tokenId),
-        routerContract.getNFTStatus(CONFIG.nftAddr, tokenId)
+        contract.tokenURI(tokenId),
+        contract.getApproved(tokenId),
+        routerContract.getNFTStatus(addr, tokenId)
       ])
       const uri = result[0]
       const isApproved = result[1] === currentRouter
@@ -38,6 +35,7 @@ export default function useExpires() {
       const info: INFT = {
         tokenId: tokenId.toNumber(),
         uri,
+        addr,
         isApproved,
         owner: account!,
         quote: Number(ethers.utils.formatUnits(quote)),
@@ -49,7 +47,7 @@ export default function useExpires() {
       }
       return info
     },
-    [nftContract, routerContract, account]
+    [routerContract, account, library]
   )
 
   const listExpires = useCallback(async () => {
@@ -77,7 +75,7 @@ export default function useExpires() {
     }
     const infoActions = []
     for (const item of items) {
-      infoActions.push(getNFT(item.tokenId))
+      infoActions.push(getNFT(item.tokenId, item.token))
     }
     let rows = await Promise.all(infoActions)
     rows = rows
@@ -93,9 +91,9 @@ export default function useExpires() {
   }, [routerContract, getNFT, setExpires])
 
   const redemption = useCallback(
-    async (tokenId: number) => {
+    async (tokenId: number, addr: string) => {
       const trans = await routerContract.systemRedemption(
-        CONFIG.nftAddr,
+        addr,
         tokenId
       )
       await trans.wait(1)

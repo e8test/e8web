@@ -14,6 +14,7 @@ declare interface IConfig {
       daos: string[]
       tokenAddr: string
       logAddr: string
+      whiteAddr: string
     }
   }
 }
@@ -25,6 +26,7 @@ declare interface INFT {
   isApproved: boolean
   price: number
   tokenId: number
+  addr: string
   uri: string
   owner: string
   lastApplyTime: number
@@ -61,4 +63,13 @@ declare interface IAuction {
   uri: string
   status: number
   lastBidder: string
+}
+
+declare interface IWhite {
+  addr: string
+}
+
+declare interface LocalAddr {
+  addr: string
+  account: string
 }

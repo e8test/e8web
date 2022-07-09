@@ -146,7 +146,7 @@ export default function Applies() {
         duration: 0
       })
       setVisible(false)
-      await pricing(tokenId || current!.tokenId, form.price)
+      await pricing(tokenId || current!.tokenId, form.price, current!.token)
       handle()
       setCurrent(undefined)
     } catch (error) {

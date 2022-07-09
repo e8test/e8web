@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { Message } from '@arco-design/web-react'
 import { ethers } from 'ethers'
 
-import CONFIG, { currentRouter, currentDAO } from '@/config'
+import { currentRouter, currentDAO } from '@/config'
 import NFTABI from '@/libs/abis/nft.json'
 import ROUTERABI from '@/libs/abis/router.json'
 import DAOABI from '@/libs/abis/dao.json'
@@ -14,50 +14,42 @@ export default function useApplies() {
   const [applies, setApplies] = useMemoState<IApply[]>('applies', [])
   const { account, library } = useWeb3React<Web3Provider>()
 
-  const nftContract = useMemo(() => {
-    return new ethers.Contract(CONFIG.nftAddr, NFTABI, library?.getSigner())
-  }, [library])
-
   const routerContract = useMemo(() => {
-    return new ethers.Contract(
-      currentRouter,
-      ROUTERABI,
-      library?.getSigner()
-    )
+    return new ethers.Contract(currentRouter, ROUTERABI, library?.getSigner())
   }, [library])
 
   const daoContract = useMemo(() => {
-    return new ethers.Contract(
-      currentDAO,
-      DAOABI,
-      library?.getSigner()
-    )
+    return new ethers.Contract(currentDAO, DAOABI, library?.getSigner())
   }, [library])
 
   const getNFT = useCallback(
-    async (tokenId: number) => {
+    async (tokenId: number, addr: string) => {
+      const contract = new ethers.Contract(addr, NFTABI, library?.getSigner())
       const [uri, owner] = await Promise.all([
-        nftContract.tokenURI(tokenId),
-        nftContract.ownerOf(tokenId)
+        contract.tokenURI(tokenId),
+        contract.ownerOf(tokenId)
       ])
       return { uri, owner }
     },
-    [nftContract]
+    [library]
   )
 
-  const quoteHistory = useCallback(async (tokenId: number) => {
-    const count = await daoContract.quoteCount(CONFIG.nftAddr, tokenId)
-    const actions = []
-    for (let i = 1; i <= count.toNumber(); i++) {
-      actions.push(daoContract.queryQuote(CONFIG.nftAddr, tokenId, i))
-    }
-    const items = await Promise.all(actions)
-    const rows = items.map(item => ({
-      addr: item[0],
-      value: Number(ethers.utils.formatUnits(item[1]))
-    }))
-    return rows
-  }, [daoContract])
+  const quoteHistory = useCallback(
+    async (tokenId: number, addr: string) => {
+      const count = await daoContract.quoteCount(addr, tokenId)
+      const actions = []
+      for (let i = 1; i <= count.toNumber(); i++) {
+        actions.push(daoContract.queryQuote(addr, tokenId, i))
+      }
+      const items = await Promise.all(actions)
+      const rows = items.map(item => ({
+        addr: item[0],
+        value: Number(ethers.utils.formatUnits(item[1]))
+      }))
+      return rows
+    },
+    [daoContract]
+  )
 
   const listApplies = useCallback(async () => {
     const handle = Message.loading({
@@ -73,8 +65,8 @@ export default function useApplies() {
     const nftActions = []
     const quoteActions = []
     for (const info of infos) {
-      nftActions.push(getNFT(info.tokenId))
-      quoteActions.push(quoteHistory(info.tokenId))
+      nftActions.push(getNFT(info.tokenId, info.token))
+      quoteActions.push(quoteHistory(info.tokenId, info.token))
     }
     const nfts = await Promise.all(nftActions)
     const quotes = await Promise.all(quoteActions)
@@ -98,25 +90,29 @@ export default function useApplies() {
   }, [routerContract, setApplies, quoteHistory, getNFT])
 
   // 估价
-  const pricing = useCallback(async (tokenId: number, value: number) => {
-    const trans = await daoContract.pricing(
-      CONFIG.nftAddr,
-      tokenId,
-      ethers.utils.parseEther(value.toString())
-    )
-    await trans.wait(1)
-    listApplies()
-  }, [daoContract, listApplies])
+  const pricing = useCallback(
+    async (tokenId: number, value: number, addr: string) => {
+      const trans = await daoContract.pricing(
+        addr,
+        tokenId,
+        ethers.utils.parseEther(value.toString())
+      )
+      await trans.wait(1)
+      listApplies()
+    },
+    [daoContract, listApplies]
+  )
 
   const setPrice = useCallback(
     async (
       tokenId: number,
       price: number,
       depositExpire: number,
-      redeemExpire: number
+      redeemExpire: number,
+      addr: string
     ) => {
       const trans = await routerContract.quote(
-        CONFIG.nftAddr,
+        addr,
         tokenId,
         ethers.utils.parseEther(price + ''),
         depositExpire,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import {
   Notification,
   Button,
@@ -9,11 +9,14 @@ import {
   Form,
   Input,
   Message,
+  Dropdown,
+  Menu,
+  List,
   InputNumber,
   FormInstance,
   Statistic
 } from '@arco-design/web-react'
-import { IconImage, IconRefresh } from '@arco-design/web-react/icon'
+import { IconDown, IconRefresh, IconDelete } from '@arco-design/web-react/icon'
 import { useWeb3React } from '@web3-react/core'
 import classNames from 'classnames'
 
@@ -28,7 +31,7 @@ export default function Bank() {
   const {
     nfts,
     deposits,
-    listNFTs,
+    nftAddrs,
     listDeposits,
     depositApproved,
     approve,
@@ -36,15 +39,21 @@ export default function Bank() {
     applyValuation,
     deposit,
     approveRedemption,
-    redemption
+    redemption,
+    listAllNFTs,
+    importNFT,
+    delImport
   } = useNFTs()
   const { connect } = useConnect()
   const { account } = useWeb3React()
   const [tab, setTab] = useState(0)
+  const [importAddr, setImportAddr] = useState('')
+  const [importing, setImporting] = useState(false)
   const [current, setCurrent] = useState<INFT>()
   const priceFormRef = useRef<FormInstance>(null)
   const formRef = useRef<FormInstance>(null)
   const [visible, setVisible] = useState(false)
+  const [showImport, setShowImport] = useState(false)
   const [loading, setLoading] = useState(false)
   const [priceModalVisible, setPriceModalVisible] = useState(false)
 
@@ -52,6 +61,10 @@ export default function Bank() {
     setCurrent(nft)
     setPriceModalVisible(true)
   }
+
+  const localAddrs = useMemo(() => {
+    return nftAddrs().filter(item => item !== CONFIG.nftAddr)
+  }, [nftAddrs])
 
   const renderNFTBtn = (nft: INFT) => {
     if (
@@ -159,7 +172,7 @@ export default function Bank() {
             long
             size="large"
             type="outline"
-            onClick={() => onRedemption(nft.tokenId)}
+            onClick={() => onRedemption(nft.tokenId, nft.addr)}
           >
             #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Redeem
           </Button>
@@ -241,9 +254,9 @@ export default function Bank() {
       })
       setPriceModalVisible(false)
       if (current!.isApproved !== true) {
-        await approve(current!.tokenId)
+        await approve(current!.tokenId, current!.addr)
       }
-      await applyValuation(current!.tokenId, price)
+      await applyValuation(current!.tokenId, price, current!.addr)
       loading()
       setCurrent(undefined)
     } catch (error) {
@@ -273,20 +286,21 @@ export default function Bank() {
       handle()
       Message.success('Transaction confirmed')
     } catch (error) {
+      console.trace(error)
       Message.warning('Transaction canceled')
     } finally {
       setLoading(false)
     }
   }
 
-  const onDeposit = async (tokenId: number) => {
+  const onDeposit = async (tokenId: number, addr: string) => {
     try {
       setLoading(true)
       const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
-      await deposit(tokenId)
+      await deposit(tokenId, addr)
       handle()
       Message.success('Transaction confirmed')
     } catch (error) {
@@ -316,19 +330,19 @@ export default function Bank() {
         </div>
       ),
       onOk: async () => {
-        onDeposit(item.tokenId)
+        onDeposit(item.tokenId, item.addr)
       }
     })
   }
 
-  const onRedemption = async (tokenId: number) => {
+  const onRedemption = async (tokenId: number, addr: string) => {
     try {
       setLoading(true)
       const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
-      await redemption(tokenId)
+      await redemption(tokenId, addr)
       handle()
       Message.success('Transaction confirmed')
     } catch (error) {
@@ -357,15 +371,62 @@ export default function Bank() {
   }
 
   const refresh = () => {
-    if (tab === 0) listNFTs()
+    if (tab === 0) listAllNFTs()
     else listDeposits()
   }
 
+  const onImport = async () => {
+    setImporting(true)
+    if (
+      nftAddrs()
+        .map(item => item.toLowerCase())
+        .includes(importAddr.toLowerCase())
+    ) {
+      return Message.error('This address already exists')
+    }
+    const handle = Message.loading({
+      content: 'Sending transaction...',
+      duration: 0
+    })
+    try {
+      const result = await importNFT(importAddr)
+      if (!result) {
+        Message.error('Could not import NFT from this address')
+      }
+      setShowImport(false)
+    } catch (error) {
+      console.trace(error)
+      Message.error('Could not import NFT from this address')
+    } finally {
+      setImporting(false)
+      handle()
+    }
+  }
+
+  const onRemoveImport = (addr: string) => {
+    Modal.confirm({
+      title: 'Confirm',
+      content: 'Are you sure you want to remove this address?',
+      onOk: () => {
+        delImport(addr)
+        setShowImport(false)
+      }
+    })
+  }
+
+  const importValid = useMemo(() => {
+    return /^0x([0-9a-f]{40})$/i.test(importAddr)
+  }, [importAddr])
+
+  useEffect(() => {
+    if (showImport === false) setImportAddr('')
+  }, [showImport])
+
   useEffect(() => {
     if (!account) return
-    if (tab === 0) listNFTs()
+    if (tab === 0) listAllNFTs()
     if (tab === 1) listDeposits()
-  }, [tab, account, listNFTs, listDeposits])
+  }, [tab, account, listAllNFTs, listDeposits])
 
   if (!account) {
     return (
@@ -396,15 +457,23 @@ export default function Bank() {
             tabs={['My NFTs', 'Pledge']}
           />
           {tab === 0 && (
-            <Button
+            <Dropdown.Button
               type="primary"
               size={isMobile ? 'small' : 'default'}
-              icon={<IconImage />}
               disabled={loading}
               onClick={() => setVisible(true)}
+              trigger="click"
+              droplist={
+                <Menu>
+                  <Menu.Item key="import" onClick={() => setShowImport(true)}>
+                    Import NFT
+                  </Menu.Item>
+                </Menu>
+              }
+              icon={<IconDown />}
             >
               Create NFT
-            </Button>
+            </Dropdown.Button>
           )}
         </Space>
         <Button
@@ -488,6 +557,51 @@ export default function Bank() {
             <Input placeholder="NFT Uri" />
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        title="Import NFT"
+        visible={showImport}
+        onCancel={() => setShowImport(false)}
+        style={{ maxWidth: '90%' }}
+        unmountOnExit
+        footer={[
+          <Button key="ok" type="primary" onClick={() => setShowImport(false)}>
+            Close
+          </Button>
+        ]}
+      >
+        <div className={styles.importHeader}>
+          <Input
+            placeholder="NFT contract address"
+            value={importAddr}
+            onChange={value => setImportAddr(value)}
+          />
+          <Button
+            type="primary"
+            disabled={!importValid}
+            loading={importing}
+            onClick={onImport}
+            className={styles.importBtn}
+          >
+            Import
+          </Button>
+        </div>
+        <Divider />
+        <List
+          dataSource={localAddrs}
+          render={(item, i) => (
+            <List.Item
+              key={i}
+              actions={[
+                <IconDelete key="remove" onClick={() => onRemoveImport(item)} />
+              ]}
+            >
+              <List.Item.Meta
+                title={isMobile ? util.formatAccount(item, 10) : item}
+              />
+            </List.Item>
+          )}
+        />
       </Modal>
     </div>
   )

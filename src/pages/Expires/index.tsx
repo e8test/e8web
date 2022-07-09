@@ -65,7 +65,7 @@ export default function Expires() {
           <Space>
             <Button
               type="primary"
-              onClick={() => onRedemption(record.tokenId)}
+              onClick={() => onRedemption(record.tokenId, record.addr)}
               disabled={loading}
             >
               Redeem & Auction
@@ -76,14 +76,14 @@ export default function Expires() {
     }
   ]
 
-  const onRedemption = async (tokenId: number) => {
+  const onRedemption = async (tokenId: number, addr: string) => {
     try {
       setLoading(true)
       const handle = Message.loading({
         content: 'Sending transaction...',
         duration: 0
       })
-      await redemption(tokenId)
+      await redemption(tokenId, addr)
       handle()
       Message.success('Transaction confirmed')
     } catch (error) {
