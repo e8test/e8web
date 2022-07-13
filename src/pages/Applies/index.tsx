@@ -97,7 +97,7 @@ export default function Applies() {
       <div className="toolbar">
         <Breadcrumb>
           <Breadcrumb.Item>Console</Breadcrumb.Item>
-          <Breadcrumb.Item>Applies</Breadcrumb.Item>
+          <Breadcrumb.Item>Application</Breadcrumb.Item>
         </Breadcrumb>
         <Button
           type="primary"
