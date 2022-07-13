@@ -73,7 +73,7 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
         <Route path="/console" element={<Console />}>
-          <Route path="" element={<Expires />} />
+          <Route path="" element={<Applies />} />
           <Route path="expires" element={<Expires />} />
           <Route path="auctions" element={<AuctionAdmin />} />
           <Route path="downgrades" element={<Downgrades />} />
