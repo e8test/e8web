@@ -32,6 +32,9 @@ export default function ConsoleHeader() {
           selectedKeys={[pathname]}
           className={styles.menu}
         >
+          <Menu.Item key="/console/applies" className={styles.menu_link}>
+            <Link to="/console/applies">Applies</Link>
+          </Menu.Item>
           <Menu.Item key="/console/expires" className={styles.menu_link}>
             <Link to="/console/expires">Expires</Link>
           </Menu.Item>
@@ -48,6 +51,9 @@ export default function ConsoleHeader() {
           </Menu.Item>
           <Menu.Item key="/console/whitelist" className={styles.menu_link}>
             <Link to="/console/whitelist">Whitelist</Link>
+          </Menu.Item>
+          <Menu.Item key="/console/status" className={styles.menu_link}>
+            <Link to="/console/status">NFT status</Link>
           </Menu.Item>
         </Menu>
         <Space>
@@ -70,6 +76,7 @@ export default function ConsoleHeader() {
         <Dropdown
           droplist={
             <Menu onClickMenuItem={key => navigate(key)}>
+              <Menu.Item key="/console/applies">Applies</Menu.Item>
               <Menu.Item key="/console/expires">Expires</Menu.Item>
               <Menu.Item key="/console/auctions">Auctions</Menu.Item>
               {level === 3 && (
@@ -77,6 +84,7 @@ export default function ConsoleHeader() {
               )}
               <Menu.Item key="/console/dashboard">Dashboard</Menu.Item>
               <Menu.Item key="/console/whitelist">Whitelist</Menu.Item>
+              <Menu.Item key="/console/status">NFT status</Menu.Item>
             </Menu>
           }
           trigger="click"

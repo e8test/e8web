@@ -1,5 +1,7 @@
 /// <reference types="react-scripts" />
 
+declare const ethereum: import('@ethersproject/providers').ExternalProvider
+
 declare interface IConfig {
   current: number
   networks: {

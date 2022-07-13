@@ -249,7 +249,7 @@ export default function useNFTs() {
     const idResult = await Promise.all(idActions)
     const infoActions = []
     for (const item of idResult) {
-      infoActions.push(getNFT(item.id, item.token))
+      infoActions.push(getNFT(item.tokenId, item.token))
     }
     let rows = await Promise.all(infoActions)
     rows = rows
@@ -378,6 +378,21 @@ export default function useNFTs() {
     [locals]
   )
 
+  const searchNFT = useCallback(
+    async (addr: string, tokenId: number) => {
+      const info = await getNFT(BigNumber.from(tokenId), addr)
+      try {
+        const index = await routerContract.getDepositIndex(addr, tokenId)
+        const result = await routerContract.getDepositedNFTByIndex(index)
+        info.timestamp = result.timestamp.toNumber() * 1000
+      } catch (error) {
+        console.trace(error)
+      }
+      return info
+    },
+    [getNFT, routerContract]
+  )
+
   useEffect(() => {
     localStorage.setItem('nfts', JSON.stringify(locals))
   }, [locals])
@@ -390,7 +405,9 @@ export default function useNFTs() {
     depositApproved,
     listDeposits,
     approve,
+    searchNFT,
     add,
+    getNFT,
     applyValuation,
     deposit,
     approveRedemption,
