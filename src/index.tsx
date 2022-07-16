@@ -14,11 +14,13 @@ function getLibrary(provider: any) {
   return library
 }
 
-ReactDOM.render(
-  <ConfigProvider locale={enUS}>
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <App />
-    </Web3ReactProvider>
-  </ConfigProvider>,
-  document.getElementById('root')
-)
+setTimeout(() => {
+  ReactDOM.render(
+    <ConfigProvider locale={enUS}>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <App />
+      </Web3ReactProvider>
+    </ConfigProvider>,
+    document.getElementById('root')
+  )
+}, 200)

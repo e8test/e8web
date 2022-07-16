@@ -7,7 +7,6 @@ import { useEagerConnect, useInactiveListener } from '@/libs/wallet/hooks'
 import Main from '@/pages/Main'
 import Bank from '@/pages/Bank'
 import Dashboard from '@/pages/Dashboard'
-import Home from '@/pages/Emptys/Home'
 import Roadmap from '@/pages/Emptys/Roadmap'
 import Console from '@/pages/Console'
 import Expires from '@/pages/Expires'
@@ -25,7 +24,6 @@ import { useConnect } from '@/libs/wallet/hooks'
 
 export default function App() {
   const { connect } = useConnect()
-  const [ready, setReady] = useState(false)
   const { error, account } = useWeb3React()
   const tried = useEagerConnect()
   useInactiveListener(!tried)
@@ -33,14 +31,6 @@ export default function App() {
   useEffect(() => {
     if (error?.message) Message.error(error.message)
   }, [error])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setReady(true)
-    }, 300)
-  }, [])
-
-  if (ready === false) return null
 
   if (!account) {
     return (
