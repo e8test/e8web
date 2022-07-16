@@ -56,19 +56,13 @@ export default function Navbar() {
           className={styles.menu}
         >
           <Menu.Item key="/" className={styles.menu_link}>
-            <Link to="/">Home</Link>
-          </Menu.Item>
-          <Menu.Item key="/bank" className={styles.menu_link}>
-            <Link to="/bank">Bank</Link>
+            <Link to="/">Bank</Link>
           </Menu.Item>
           <Menu.Item key="/market" className={styles.menu_link}>
             <Link to="/market">Market</Link>
           </Menu.Item>
           <Menu.Item key="/dao" className={styles.menu_link}>
             <Link to="/dao">DAO</Link>
-          </Menu.Item>
-          <Menu.Item key="/roadmap" className={styles.menu_link}>
-            <Link to="/roadmap">Roadmap</Link>
           </Menu.Item>
           <Menu.Item key="/dashboard" className={styles.menu_link}>
             <Link to="/dashboard">Dashboard</Link>
@@ -105,11 +99,9 @@ export default function Navbar() {
                 if (key !== 'airdrop') navigate(key)
               }}
             >
-              <Menu.Item key="/">Home</Menu.Item>
-              <Menu.Item key="/bank">Bank</Menu.Item>
+              <Menu.Item key="/">Bank</Menu.Item>
               <Menu.Item key="/market">Market</Menu.Item>
               <Menu.Item key="/dao">DAO</Menu.Item>
-              <Menu.Item key="/roadmap">Roadmap</Menu.Item>
               <Menu.Item key="/dashboard">Dashboard</Menu.Item>
               <Menu.Item key="airdrop" onClick={airdrop}>
                 AirDrop

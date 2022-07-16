@@ -20,15 +20,17 @@ export default function WalletModal({ onClose, onSelect }: Props) {
     setVisible(false)
   }
 
-  const onItemSelect = useCallback((item: WalletType) => {
-    onSelect(item)
-    close()
-  }, [onSelect])
+  const onItemSelect = useCallback(
+    (item: WalletType) => {
+      onSelect(item)
+      close()
+    },
+    [onSelect]
+  )
 
   useEffect(() => {
-    if (ethereum) setVisible(true)
-    else onItemSelect('WalletConnect')
-  }, [ethereum, onItemSelect])
+    setVisible(true)
+  }, [])
 
   return (
     <Modal
@@ -41,7 +43,7 @@ export default function WalletModal({ onClose, onSelect }: Props) {
       maskClosable
     >
       <div className={styles.wrap}>
-        {ethereum !== undefined && (
+        {typeof ethereum !== 'undefined' ? (
           <div className={styles.item} onClick={() => onItemSelect('MetaMask')}>
             <div className={styles.logo}>
               <img src={metamaskBanner} alt="" />
@@ -49,17 +51,35 @@ export default function WalletModal({ onClose, onSelect }: Props) {
             <div className={styles.title}>MetaMask</div>
             <div className={styles.desc}>Connect to your MetaMask Wallet</div>
           </div>
+        ) : (
+          <a
+            className={styles.item}
+            href="https://metamask.io/"
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setVisible(false)}
+          >
+            <div className={styles.logo}>
+              <img src={metamaskBanner} alt="" />
+            </div>
+            <div className={styles.title}>Install MetaMask</div>
+            <div className={styles.desc}>Connect to your MetaMask Wallet</div>
+          </a>
         )}
-        <div
-          className={styles.item}
-          onClick={() => onItemSelect('WalletConnect')}
-        >
-          <div className={styles.logo}>
-            <img src={walletconnectBanner} alt="" />
+        {navigator.userAgent.includes('Mobile') === false && (
+          <div
+            className={styles.item}
+            onClick={() => onItemSelect('WalletConnect')}
+          >
+            <div className={styles.logo}>
+              <img src={walletconnectBanner} alt="" />
+            </div>
+            <div className={styles.title}>WalletConnect</div>
+            <div className={styles.desc}>
+              Scan with WalletConnect to connect
+            </div>
           </div>
-          <div className={styles.title}>WalletConnect</div>
-          <div className={styles.desc}>Scan with WalletConnect to connect</div>
-        </div>
+        )}
       </div>
     </Modal>
   )

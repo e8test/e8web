@@ -10,6 +10,9 @@ body {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
+a {
+  text-decoration: none;
+}
 .page {
   width: 100%;
   min-height: 100vh;
