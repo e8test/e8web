@@ -64,6 +64,7 @@ export default function App() {
         <Route path="/" element={<Main />}>
           <Route path="" element={<Bank />} />
           <Route path="roadmap" element={<Roadmap />} />
+          <Route path="bank" element={<Bank />} />
           <Route path="market" element={<Auctions />} />
           <Route path="dao" element={<DAO />}>
             <Route path="" element={<DaoDeposit />} />
