@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Message, Result, Button } from '@arco-design/web-react'
 import { useWeb3React } from '@web3-react/core'
