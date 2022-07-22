@@ -17,6 +17,7 @@ import GlobalDashboard from '@/pages/GlobalDashboard'
 import Whitelist from '@/pages/Whitelist'
 import Applies from '@/pages/Applies'
 import Status from '@/pages/Status'
+import Deposits from '@/pages/Deposits'
 import DAO from '@/pages/DAO'
 import DaoDeposit from '@/pages/DAO/Deposit'
 import DaoApplies from '@/pages/DAO/Applies'
@@ -64,6 +65,7 @@ export default function App() {
         </Route>
         <Route path="/console" element={<Console />}>
           <Route path="" element={<Applies />} />
+          <Route path="deposits" element={<Deposits />} />
           <Route path="expires" element={<Expires />} />
           <Route path="auctions" element={<AuctionAdmin />} />
           <Route path="downgrades" element={<Downgrades />} />

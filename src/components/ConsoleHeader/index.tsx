@@ -35,6 +35,9 @@ export default function ConsoleHeader() {
           <Menu.Item key="/console/applies" className={styles.menu_link}>
             <Link to="/console/applies">Application</Link>
           </Menu.Item>
+          <Menu.Item key="/console/deposits" className={styles.menu_link}>
+            <Link to="/console/deposits">Deposits</Link>
+          </Menu.Item>
           <Menu.Item key="/console/expires" className={styles.menu_link}>
             <Link to="/console/expires">Expires</Link>
           </Menu.Item>
@@ -77,6 +80,7 @@ export default function ConsoleHeader() {
           droplist={
             <Menu onClickMenuItem={key => navigate(key)}>
               <Menu.Item key="/console/applies">Application</Menu.Item>
+              <Menu.Item key="/console/deposits">Deposits</Menu.Item>
               <Menu.Item key="/console/expires">Expires</Menu.Item>
               <Menu.Item key="/console/auctions">Auctions</Menu.Item>
               {level === 3 && (

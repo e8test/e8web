@@ -75,3 +75,13 @@ declare interface LocalAddr {
   addr: string
   account: string
 }
+
+declare interface IDeposit {
+  token: string
+  tokenId: number
+  uri: string
+  owner: string
+  timestamp: number
+  redeemDeadline: number
+  value: number
+}
