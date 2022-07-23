@@ -24,23 +24,24 @@ export default function useDeposits() {
     const items: IDeposit[] = []
     const first = await routerContract.firstDepostedNFTIndex()
     let _next = first.toNumber()
-    if (_next === 0) return
-    while (items.length < 10) {
-      const result = await routerContract.getDepositedNFTByIndex(_next)
-      const contract = new ethers.Contract(result.token, NFTABI, provider)
-      const uri = await contract.tokenURI(result.tokenId)
-      const obj: any = {
-        token: result.token,
-        tokenId: result.tokenId.toNumber(),
-        uri,
-        owner: result.owner,
-        timestamp: result.timestamp.toNumber(),
-        redeemDeadline: result.redeemDeadline.toNumber() * 1000,
-        value: Number(ethers.utils.formatUnits(result.value))
+    if (_next > 0) {
+      while (items.length < 10) {
+        const result = await routerContract.getDepositedNFTByIndex(_next)
+        const contract = new ethers.Contract(result.token, NFTABI, provider)
+        const uri = await contract.tokenURI(result.tokenId)
+        const obj: any = {
+          token: result.token,
+          tokenId: result.tokenId.toNumber(),
+          uri,
+          owner: result.owner,
+          timestamp: result.timestamp.toNumber(),
+          redeemDeadline: result.redeemDeadline.toNumber() * 1000,
+          value: Number(ethers.utils.formatUnits(result.value))
+        }
+        items.push(obj)
+        _next = result.next
+        if (result.next.toNumber() === 0) break
       }
-      items.push(obj)
-      _next = result.next
-      if (result.next.toNumber() === 0) break
     }
     setDeposits(items)
     console.log('=============all deposits=============')
