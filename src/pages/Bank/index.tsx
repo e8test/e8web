@@ -67,10 +67,7 @@ export default function Bank() {
   }, [nftAddrs])
 
   const renderNFTBtn = (nft: INFT) => {
-    if (
-      !nft.isApproved ||
-      (nft.depositExpire > 0 && nft.depositExpire < Date.now())
-    ) {
+    if (!nft.isApproved) {
       return (
         <Button
           long
@@ -83,37 +80,7 @@ export default function Bank() {
         </Button>
       )
     }
-    if (nft.isApproved && !nft.quote && !nft.price) {
-      if (
-        !nft.lastApplyTime ||
-        Date.now() - nft.lastApplyTime > 72 * 3600 * 1000
-      ) {
-        return (
-          <Button
-            long
-            size="large"
-            className={styles.btn}
-            disabled={loading}
-            onClick={() => showPriceModal(nft)}
-          >
-            #{nft.tokenId}, Quote
-          </Button>
-        )
-      } else {
-        return (
-          <Button
-            long
-            size="large"
-            status="danger"
-            className={styles.btn}
-            disabled
-          >
-            #{nft.tokenId}, Quote Rejected
-          </Button>
-        )
-      }
-    }
-    if (nft.price && nft.depositExpire && nft.depositExpire > Date.now()) {
+    if (nft.status === 1) {
       return (
         <div className={styles.bottom}>
           <div className={styles.tip}>
@@ -135,6 +102,39 @@ export default function Bank() {
             #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Pledge
           </Button>
         </div>
+      )
+    }
+    if (nft.status === 2) {
+      return (
+        <Button
+          long
+          size="large"
+          status="danger"
+          className={styles.btn}
+          disabled
+        >
+          <div className={styles.btnCount}>
+            <span>#{nft.tokenId}, Apply avaliable after:</span>
+            <Statistic.Countdown
+              now={Date.now()}
+              value={nft.avaliableApplyTime}
+              onFinish={() => window.location.reload()}
+            />
+          </div>
+        </Button>
+      )
+    }
+    if (nft.status === 3 && !nft.quote) {
+      return (
+        <Button
+          long
+          size="large"
+          className={styles.btn}
+          disabled={loading}
+          onClick={() => showPriceModal(nft)}
+        >
+          #{nft.tokenId}, Quote
+        </Button>
       )
     }
     return (

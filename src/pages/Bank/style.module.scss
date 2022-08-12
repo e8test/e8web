@@ -49,6 +49,20 @@
   align-items: center;
   justify-content: center;
 }
+.btnCount {
+  display: flex;
+  align-items: center;
+
+  & > span {
+    margin-right: 5px;
+  }
+
+  div {
+    font-size: 14px!important;
+    color: var(--color-danger-light-3)!important;
+    font-weight: normal!important;
+  }
+}
 .empty {
   display: flex;
   justify-content: center;

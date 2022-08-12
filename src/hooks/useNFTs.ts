@@ -54,10 +54,10 @@ export default function useNFTs() {
       ])
       const uri = result[0]
       const isApproved = result[1] === currentRouter
-      const [quote, value, depositExpire, redeemExpire, lastApply] = result[2]
+      const [quote, value, depositExpire, redeemExpire, avaliableApply, status] = result[2]
       const depositExpireTime = depositExpire.toNumber() * 1000
       const redeemExpireTime = redeemExpire.toNumber() * 1000
-      const lastApplyTime = lastApply.toNumber() * 1000
+      const avaliableApplyTime = avaliableApply.toNumber() * 1000
       const info: INFT = {
         tokenId: tokenId.toNumber(),
         uri,
@@ -68,8 +68,9 @@ export default function useNFTs() {
         price: Number(ethers.utils.formatUnits(value)),
         depositExpire: depositExpireTime,
         redeemExpire: redeemExpireTime,
-        lastApplyTime,
-        timestamp: 0
+        avaliableApplyTime,
+        timestamp: 0,
+        status: status.toNumber()
       }
       return info
     },
@@ -190,8 +191,9 @@ export default function useNFTs() {
             price: 0,
             depositExpire: 0,
             redeemExpire: 0,
-            lastApplyTime: 0,
-            timestamp: 0
+            avaliableApplyTime: 0,
+            timestamp: 0,
+            status: 0
           }
         }
       }
@@ -208,16 +210,17 @@ export default function useNFTs() {
     for (const row of infoResult.results[currentRouter]?.callsReturnContext ||
       []) {
       const nft = items[row.reference]
-      const [quote, value, depositExpire, redeemExpire, lastApply] =
+      const [quote, value, depositExpire, redeemExpire, avaliableApply, status] =
         row.returnValues
       const depositExpireTime = BigNumber.from(depositExpire).toNumber() * 1000
       const redeemExpireTime = BigNumber.from(redeemExpire).toNumber() * 1000
-      const lastApplyTime = BigNumber.from(lastApply).toNumber() * 1000
+      const avaliableApplyTime = BigNumber.from(avaliableApply).toNumber() * 1000
       nft.depositExpire = depositExpireTime
       nft.redeemExpire = redeemExpireTime
-      nft.lastApplyTime = lastApplyTime
+      nft.avaliableApplyTime = avaliableApplyTime
       nft.quote = Number(ethers.utils.formatUnits(BigNumber.from(quote)))
       nft.price = Number(ethers.utils.formatUnits(BigNumber.from(value)))
+      nft.status = BigNumber.from(status).toNumber()
     }
     const nfts = Object.values(items).reverse()
     console.log('=============all nfts=============')

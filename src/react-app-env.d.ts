@@ -31,8 +31,9 @@ declare interface INFT {
   addr: string
   uri: string
   owner: string
-  lastApplyTime: number
+  avaliableApplyTime: number
   timestamp: number
+  status: number
 }
 
 declare interface IApply {

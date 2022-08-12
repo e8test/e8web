@@ -28,10 +28,10 @@ export default function useExpires() {
       ])
       const uri = result[0]
       const isApproved = result[1] === currentRouter
-      const [quote, value, depositExpire, redeemExpire, lastApply] = result[2]
+      const [quote, value, depositExpire, redeemExpire, avaliableApply, status] = result[2]
       const depositExpireTime = depositExpire.toNumber() * 1000
       const redeemExpireTime = redeemExpire.toNumber() * 1000
-      const lastApplyTime = lastApply.toNumber() * 1000
+      const avaliableApplyTime = avaliableApply.toNumber() * 1000
       const info: INFT = {
         tokenId: tokenId.toNumber(),
         uri,
@@ -42,8 +42,9 @@ export default function useExpires() {
         price: Number(ethers.utils.formatUnits(value)),
         depositExpire: depositExpireTime,
         redeemExpire: redeemExpireTime,
-        lastApplyTime,
-        timestamp: 0
+        avaliableApplyTime,
+        timestamp: 0,
+        status: status.toNumber()
       }
       return info
     },
