@@ -534,8 +534,8 @@ export default function Bank() {
         <Form ref={formRef} layout="vertical" size="large">
           <Form.Item>
             <div className={styles.contractAddr}>
-              <div>Contract address</div>
-              {CONFIG.nftAddr}
+              Contract address
+              <div>{CONFIG.nftAddr}</div>
             </div>
           </Form.Item>
           <Form.Item

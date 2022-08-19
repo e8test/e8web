@@ -89,12 +89,17 @@
   text-align: center;
 
   div {
-    margin-bottom: 5px;
+    margin-top: 5px;
   }
 }
 
 @media screen and (max-width: 768px) {
   .nfts {
     gap: 30px;
+  }
+  .contractAddr {
+    div {
+      font-size: 12px;
+    }
   }
 }
