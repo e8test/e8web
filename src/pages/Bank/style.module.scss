@@ -85,6 +85,13 @@
 .importBtn {
   margin-left: 10px;
 }
+.contractAddr {
+  text-align: center;
+
+  div {
+    margin-bottom: 5px;
+  }
+}
 
 @media screen and (max-width: 768px) {
   .nfts {

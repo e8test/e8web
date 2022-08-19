@@ -1,6 +1,7 @@
 /// <reference types="react-scripts" />
 
 declare const ethereum: import('@ethersproject/providers').ExternalProvider
+declare const __VERSION__: string
 
 declare interface IConfig {
   current: number

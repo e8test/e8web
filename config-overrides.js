@@ -6,6 +6,9 @@ const {
 } = require('customize-cra')
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 const path = require('path')
+const webpack = require('webpack')
+const dayjs = require('dayjs')
+const pkg = require('./package.json')
 
 module.exports = override(
   addWebpackAlias({
@@ -19,6 +22,11 @@ module.exports = override(
   addWebpackPlugin(
     new NodePolyfillPlugin({
       excludeAliases: ['console']
+    })
+  ),
+  addWebpackPlugin(
+    new webpack.DefinePlugin({
+      __VERSION__: `"${pkg.version} build-${dayjs().format('YYMMDD')}"`
     })
   )
 )

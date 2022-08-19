@@ -8,6 +8,7 @@ export default function Footer() {
       <Divider />
       <div className={styles.copyright}>
         Copyright 2022 Index & Liquidity System All Rights Reserved
+        <div>{__VERSION__}</div>
       </div>
     </footer>
   )
