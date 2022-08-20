@@ -67,6 +67,26 @@ export default function Bank() {
   }, [nftAddrs])
 
   const renderNFTBtn = (nft: INFT) => {
+    if (nft.status === 2) {
+      return (
+        <Button
+          long
+          size="large"
+          status="danger"
+          className={styles.btn}
+          disabled
+        >
+          <div className={styles.btnCount}>
+            <span>#{nft.tokenId}, Apply avaliable after:</span>
+            <Statistic.Countdown
+              now={Date.now()}
+              value={nft.avaliableApplyTime}
+              onFinish={() => window.location.reload()}
+            />
+          </div>
+        </Button>
+      )
+    }
     if (!nft.isApproved) {
       return (
         <Button
@@ -102,26 +122,6 @@ export default function Bank() {
             #{nft.tokenId}, Price {nft.price} {CONFIG.tokenName}, Pledge
           </Button>
         </div>
-      )
-    }
-    if (nft.status === 2) {
-      return (
-        <Button
-          long
-          size="large"
-          status="danger"
-          className={styles.btn}
-          disabled
-        >
-          <div className={styles.btnCount}>
-            <span>#{nft.tokenId}, Apply avaliable after:</span>
-            <Statistic.Countdown
-              now={Date.now()}
-              value={nft.avaliableApplyTime}
-              onFinish={() => window.location.reload()}
-            />
-          </div>
-        </Button>
       )
     }
     if (nft.status === 3 && !nft.quote) {

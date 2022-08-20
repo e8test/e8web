@@ -1,6 +1,6 @@
 {
   "name": "e8web",
-  "version": "0.5.1",
+  "version": "0.7.1",
   "private": true,
   "dependencies": {
     "@arco-design/web-react": "^2.28.1",
