@@ -17,7 +17,7 @@ import useMemoState from './useMemoState'
 import { useProvider } from '@/libs/wallet/hooks'
 
 export default function useNFTs() {
-  const provider = useProvider()
+  const provider: any = useProvider()
   const [locals, setLocals] = useState<LocalAddr[]>(
     JSON.parse(localStorage.getItem('nfts') || '[]')
   )

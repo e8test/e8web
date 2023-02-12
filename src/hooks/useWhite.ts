@@ -11,7 +11,7 @@ import CONFIG from '@/config'
 import { useProvider } from '@/libs/wallet/hooks'
 
 export default function useWhite() {
-  const provider = useProvider()
+  const provider: any = useProvider()
   const [count, setCount] = useState(0)
   const [airdroped, setAirdroped] = useState(false)
   const [inWhite, setInWhite] = useState<boolean>()
